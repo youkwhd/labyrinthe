@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "labyrinthe.h"
+#include "maze.h"
 #include "matrix.h"
 
 void matrix_init(matrix_t *mt, uint32_t rows, uint32_t cols, size_t type_size)
@@ -15,9 +16,14 @@ void matrix_init(matrix_t *mt, uint32_t rows, uint32_t cols, size_t type_size)
         mt->__matrix[i] = malloc(sizeof(mt->__matrix[0][i]) * mt->cols * mt->type_size);
 
         for (uint32_t j = 0; j < mt->cols; j++) {
-            mt->__matrix[i][j * mt->type_size] = (void *)0;
+            matrix_set(mt, i, j, (void *)MAZE_NODE_DIR_NONE);
         }
     }
+}
+
+void matrix_set(matrix_t *mt, uint32_t row, uint32_t col, void *var)
+{
+    mt->__matrix[row][col * mt->type_size] = var;
 }
 
 void matrix_cleanup(matrix_t *mt)
