@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "maze.h"
+#include "stack.h"
 
 bool maze_dir_valid(maze_node_t prev, maze_node_t next)
 {
@@ -26,6 +27,10 @@ void maze_init(maze_t *maze)
     srand(time(NULL));
     matrix_init(&maze->body, 5, 5, sizeof(uint8_t));
     return;
+
+    stack_t stack;
+    stack_init(&stack, 5, sizeof(uint8_t));
+    stack_cleanup(&stack);
 
     maze_node_t prev = MAZE_NODE_DIR_DOWN;
     uint32_t i = 0, j = 0;
