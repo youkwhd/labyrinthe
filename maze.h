@@ -8,5 +8,6 @@ typedef struct maze_t {
 } maze_t;
 
 void maze_init(maze_t *maze);
+void maze_cleanup(maze_t *maze);
 
 #endif // __LABYRINTHE_MAZE_H
