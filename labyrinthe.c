@@ -9,9 +9,8 @@ int main(int argc, char **argv)
     UNUSED(argv);
 
     maze_t maze;
-    maze_init(&maze);
-
-    printf("Hello from Labyrinthe!\n");
+    maze_init(&maze, 5, 5);
+    maze_generate(&maze);
 
     maze_cleanup(&maze);
     return 0;
