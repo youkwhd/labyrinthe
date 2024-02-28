@@ -13,19 +13,6 @@ bool maze_node_dir_is_valid(maze_node_t prev, maze_node_t next)
     UNUSED(prev);
     UNUSED(next);
     return false;
-
-    /* switch (next) { */
-    /* case MAZE_NODE_DIR_UP: */
-    /*     return prev != MAZE_NODE_DIR_DOWN; */
-    /* case MAZE_NODE_DIR_DOWN: */
-    /*     return prev != MAZE_NODE_DIR_UP; */
-    /* case MAZE_NODE_DIR_LEFT: */
-    /*     return prev != MAZE_NODE_DIR_RIGHT; */
-    /* case MAZE_NODE_DIR_RIGHT: */
-    /*     return prev != MAZE_NODE_DIR_LEFT; */
-    /* default: */
-    /*     return false; */
-    /* } */
 }
 
 void maze_node_printc(maze_node_t node)
@@ -152,8 +139,6 @@ void maze_generate(maze_t *maze)
     cur_coor->x++;
 
     for (; !stack_is_empty(&stack); ) {
-        printf("x: %d __ y: %d\n", cur_coor->x, cur_coor->y);
-
         maze_node_t neighbors[4] = {-1, -1, -1, -1}, empty_neighbors[4] = {0};
         maze_get_neighbors(maze, *cur_coor, neighbors);
 
@@ -175,13 +160,7 @@ void maze_generate(maze_t *maze)
             continue;
         }
 
-        for (size_t i = 0; i < empty_neighbors_length; i++) {
-            maze_node_println(empty_neighbors[i]);
-        }
-
         maze_node_t dir = empty_neighbors[rand() % empty_neighbors_length];
-        printf("SETTING: ");
-        maze_node_println(dir);
         maze_set_node_dir(maze, *cur_coor, dir);
         stack_push(&stack, *cur_coor);
 
@@ -189,8 +168,6 @@ void maze_generate(maze_t *maze)
         cur_coor->x += dir == MAZE_NODE_DIR_RIGHT;
         cur_coor->y += dir == MAZE_NODE_DIR_DOWN;
         cur_coor->x -= dir == MAZE_NODE_DIR_LEFT;
-
-        maze_println(maze);
     }
 
     maze_println(maze);
