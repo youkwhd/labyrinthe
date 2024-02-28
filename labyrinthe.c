@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "maze.h"
 #include "labyrinthe.h"
 
