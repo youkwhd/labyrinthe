@@ -4,12 +4,13 @@
 #include <stdint.h>
 
 typedef enum maze_node_t {
+    MAZE_NODE_DIR_INVALID = -1,
     MAZE_NODE_DIR_NONE = 0,
-    MAZE_NODE_DIR_BLOCKED,
-    MAZE_NODE_DIR_UP,
-    MAZE_NODE_DIR_RIGHT,
-    MAZE_NODE_DIR_DOWN,
-    MAZE_NODE_DIR_LEFT,
+    MAZE_NODE_DIR_BLOCKED = 1,
+    MAZE_NODE_DIR_UP = 1 << 2,
+    MAZE_NODE_DIR_RIGHT = 1 << 3,
+    MAZE_NODE_DIR_DOWN = 1 << 4,
+    MAZE_NODE_DIR_LEFT = 1 << 5,
 } maze_node_t;
 
 typedef struct maze_t {

@@ -3,77 +3,88 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "labyrinthe.h"
 #include "maze.h"
 #include "coordinate.h"
 #include "stack.h"
 
 bool maze_node_dir_is_valid(maze_node_t prev, maze_node_t next)
 {
-    switch (next) {
-    case MAZE_NODE_DIR_UP:
-        return prev != MAZE_NODE_DIR_DOWN;
-    case MAZE_NODE_DIR_DOWN:
-        return prev != MAZE_NODE_DIR_UP;
-    case MAZE_NODE_DIR_LEFT:
-        return prev != MAZE_NODE_DIR_RIGHT;
-    case MAZE_NODE_DIR_RIGHT:
-        return prev != MAZE_NODE_DIR_LEFT;
-    default:
-        return false;
-    }
+    UNUSED(prev);
+    UNUSED(next);
+    return false;
+
+    /* switch (next) { */
+    /* case MAZE_NODE_DIR_UP: */
+    /*     return prev != MAZE_NODE_DIR_DOWN; */
+    /* case MAZE_NODE_DIR_DOWN: */
+    /*     return prev != MAZE_NODE_DIR_UP; */
+    /* case MAZE_NODE_DIR_LEFT: */
+    /*     return prev != MAZE_NODE_DIR_RIGHT; */
+    /* case MAZE_NODE_DIR_RIGHT: */
+    /*     return prev != MAZE_NODE_DIR_LEFT; */
+    /* default: */
+    /*     return false; */
+    /* } */
 }
 
 void maze_node_printc(maze_node_t node)
 {
-    switch (node) {
-    case MAZE_NODE_DIR_NONE:
+    if (node == MAZE_NODE_DIR_NONE) {
         printf("0 ");
-        break;
-    case MAZE_NODE_DIR_BLOCKED:
-        printf("B ");
-        break;
-    case MAZE_NODE_DIR_UP:
-        printf("U ");
-        break;
-    case MAZE_NODE_DIR_RIGHT:
-        printf("R ");
-        break;
-    case MAZE_NODE_DIR_DOWN:
-        printf("D ");
-        break;
-    case MAZE_NODE_DIR_LEFT:
-        printf("L ");
-        break;
-    default:
-        printf("! ");
-        break;
+        return;
     }
+    if (node == MAZE_NODE_DIR_BLOCKED) {
+        printf("B ");
+        return;
+    }
+    if (node == -1) {
+        printf("! ");
+        return;
+    }
+
+    if (node & MAZE_NODE_DIR_UP) {
+        printf("U");
+    }
+    if (node & MAZE_NODE_DIR_RIGHT) {
+        printf("R");
+    }
+    if (node & MAZE_NODE_DIR_DOWN) {
+        printf("D");
+    }
+    if (node & MAZE_NODE_DIR_LEFT) {
+        printf("L");
+    }
+
+    printf(" ");
 }
 
 void maze_node_println(maze_node_t node)
 {
-    switch (node) {
-    case MAZE_NODE_DIR_NONE:
+    if (node == MAZE_NODE_DIR_NONE) {
         puts("MAZE_NODE_DIR_NONE");
-        break;
-    case MAZE_NODE_DIR_BLOCKED:
+        return;
+    }
+    if (node == MAZE_NODE_DIR_BLOCKED) {
         puts("MAZE_NODE_DIR_BLOCKED");
-        break;
-    case MAZE_NODE_DIR_UP:
-        puts("MAZE_NODE_DIR_UP");
-        break;
-    case MAZE_NODE_DIR_RIGHT:
-        puts("MAZE_NODE_DIR_RIGHT");
-        break;
-    case MAZE_NODE_DIR_DOWN:
-        puts("MAZE_NODE_DIR_DOWN");
-        break;
-    case MAZE_NODE_DIR_LEFT:
-        puts("MAZE_NODE_DIR_LEFT");
-        break;
-    default:
+        return;
+    }
+    if (node == -1) {
         puts("__MAZE_NODE_DIR_INVALID");
-        break;
+        return;
+    }
+
+    if (node & MAZE_NODE_DIR_UP) {
+        puts("MAZE_NODE_DIR_UP");
+    }
+    if (node & MAZE_NODE_DIR_RIGHT) {
+        puts("MAZE_NODE_DIR_RIGHT");
+    }
+    if (node & MAZE_NODE_DIR_DOWN) {
+        puts("MAZE_NODE_DIR_DOWN");
+    }
+    if (node & MAZE_NODE_DIR_LEFT) {
+        puts("MAZE_NODE_DIR_LEFT");
     }
 }
 
@@ -91,7 +102,7 @@ void maze_println(maze_t *maze)
 
 void maze_set_node_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
 {
-    maze->body[coor.y][coor.x] = dir;
+    maze->body[coor.y][coor.x] |= dir;
 }
 
 void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_node_t *neighbors)
@@ -149,7 +160,7 @@ void maze_generate(maze_t *maze)
         size_t empty_neighbors_length = 0;
         for (size_t i = 0; i < 4; i++) {
             if (neighbors[i] == MAZE_NODE_DIR_NONE) {
-                empty_neighbors[empty_neighbors_length++] = 2 + i;
+                empty_neighbors[empty_neighbors_length++] = 1 << (i + 2);
             }
         }
 
