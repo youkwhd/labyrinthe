@@ -2,8 +2,8 @@
 #include "coordinate.h"
 #include "labyrinthe.h"
 
-#define MAZE_HEIGHT 30
-#define MAZE_WIDTH 30
+#define MAZE_HEIGHT 5
+#define MAZE_WIDTH 5
 
 int main(int argc, char **argv)
 {

@@ -49,6 +49,82 @@ void maze_println(maze_t *maze)
     }
 }
 
+void __maze_println(maze_t *maze)
+{
+// *-*
+// | |
+// *-*
+//
+    for (int i = 0; i < maze->width; i++) {
+        char __upr[1024] = {0};
+        char __mid[1024] = {0};
+        char __bot[1024] = {0};
+
+        size_t uprlen = 0, midlen = 0, botlen = 0;
+
+        for (int j = 0; j < maze->height; j++) {
+            maze_node_t node = maze->body[i][j];
+
+            if (i <= 0) {
+                if (j <= 0) {
+                    __upr[uprlen++] = '*';
+                }
+                if (!(node & DIRECTION_UP)) {
+                    __upr[uprlen++] = '-';
+                } else {
+                    __upr[uprlen++] = ' ';
+                }
+                __upr[uprlen++] = '*';
+            }
+
+            if (j <= 0) {
+                if (!(node & DIRECTION_LEFT)) {
+                    __mid[midlen++] = '|';
+                } else {
+                    __mid[midlen++] = ' ';
+                }
+
+                __mid[midlen++] = ' ';
+                if (!(node & DIRECTION_RIGHT)) {
+                    __mid[midlen++] = '|';
+                } else {
+                    __mid[midlen++] = ' ';
+                }
+            }
+            if (j >= 1) {
+                if (node & DIRECTION_LEFT) {
+                    __mid[midlen - 1] = ' ';
+                }
+
+                __mid[midlen++] = ' ';
+
+                if (node & DIRECTION_RIGHT) {
+                    __mid[midlen++] = ' ';
+                } else {
+                    __mid[midlen++] = '|';
+                }
+            }
+
+            if (i >= 0) {
+                if (j <= 0) {
+                    __bot[botlen++] = '*';
+                }
+                if (!(node & DIRECTION_DOWN)) {
+                    __bot[botlen++] = '-';
+                } else {
+                    __bot[botlen++] = ' ';
+                }
+                __bot[botlen++] = '*';
+            }
+        }
+
+        printf("%s\n", __upr);
+        printf("%s\n", __mid);
+        printf("%s", __bot);
+    }
+    printf("\n");
+}
+
 void maze_set_node_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
 {
     maze->body[coor.y][coor.x] |= dir;
@@ -166,6 +242,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     }
 
     maze_println(maze);
+    __maze_println(maze);
     stack_cleanup(&stack);
 }
 
