@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "coordinate.h"
+
 typedef enum maze_node_t {
     MAZE_NODE_DIR_INVALID = -1,
     MAZE_NODE_DIR_NONE = 0,
@@ -19,7 +21,7 @@ typedef struct maze_t {
 } maze_t;
 
 void maze_init(maze_t *maze, uint16_t height, uint16_t width);
-void maze_generate(maze_t *maze);
+void maze_generate(maze_t *maze, coordinate_t *start);
 void maze_cleanup(maze_t *maze);
 
 #endif // __LABYRINTHE_MAZE_H

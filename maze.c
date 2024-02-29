@@ -4,7 +4,6 @@
 #include <time.h>
 
 #include "maze.h"
-#include "coordinate.h"
 #include "stack.h"
 
 void maze_node_printc(maze_node_t node)
@@ -144,17 +143,28 @@ void maze_init(maze_t *maze, uint16_t height, uint16_t width)
     maze->width = width;
 }
 
-void maze_generate(maze_t *maze)
+void maze_generate(maze_t *maze, coordinate_t *start)
 {
     srand(time(NULL));
 
     stack_t stack;
     stack_init(&stack, maze->height * maze->width);
 
-    coordinate_t *cur_coor = coordinate_init(0, 0);
-    maze_set_node_dir(maze, *cur_coor, MAZE_NODE_DIR_RIGHT);
+    /* coordinate_t *cur_coor = coordinate_init(0, 0); */
+    coordinate_t *cur_coor = start;
+
+    maze_node_t __avail_neighbors[4] = {MAZE_NODE_DIR_NONE};
+    size_t __avail_neighbors_len = 0;
+    maze_get_available_neighbors(maze, *cur_coor, __avail_neighbors, &__avail_neighbors_len);
+
+    maze_node_t __dir = __avail_neighbors[rand() % __avail_neighbors_len];
+    maze_set_node_dir(maze, *cur_coor, __dir);
     stack_push(&stack, *cur_coor);
-    cur_coor->x++;
+
+    cur_coor->y -= __dir == MAZE_NODE_DIR_UP;
+    cur_coor->x += __dir == MAZE_NODE_DIR_RIGHT;
+    cur_coor->y += __dir == MAZE_NODE_DIR_DOWN;
+    cur_coor->x -= __dir == MAZE_NODE_DIR_LEFT;
 
     while (!stack_is_empty(&stack)) {
         maze_node_t avail_neighbors[4] = {MAZE_NODE_DIR_NONE};
