@@ -143,27 +143,32 @@ void maze_init(maze_t *maze, uint16_t height, uint16_t width)
     maze->width = width;
 }
 
+coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
+{
+    maze_node_t avail_neighbors[4] = {DIRECTION_NONE};
+    size_t avail_neighbors_len = 0;
+    maze_get_available_neighbors(maze, start, avail_neighbors, &avail_neighbors_len);
+
+    maze_node_t dir = avail_neighbors[rand() % avail_neighbors_len];
+    maze_set_node_dir(maze, start, dir);
+
+    start.y -= dir == DIRECTION_UP;
+    start.x += dir == DIRECTION_RIGHT;
+    start.y += dir == DIRECTION_DOWN;
+    start.x -= dir == DIRECTION_LEFT;
+
+    return start;
+}
+
 void maze_generate(maze_t *maze, coordinate_t start)
 {
     srand(time(NULL));
 
-    coordinate_t cur_coor = start;
-
     stack_t stack;
     stack_init(&stack, maze->height * maze->width);
 
-    maze_node_t __avail_neighbors[4] = {DIRECTION_NONE};
-    size_t __avail_neighbors_len = 0;
-    maze_get_available_neighbors(maze, cur_coor, __avail_neighbors, &__avail_neighbors_len);
-
-    maze_node_t __dir = __avail_neighbors[rand() % __avail_neighbors_len];
-    maze_set_node_dir(maze, cur_coor, __dir);
-    stack_push(&stack, cur_coor);
-
-    cur_coor.y -= __dir == DIRECTION_UP;
-    cur_coor.x += __dir == DIRECTION_RIGHT;
-    cur_coor.y += __dir == DIRECTION_DOWN;
-    cur_coor.x -= __dir == DIRECTION_LEFT;
+    coordinate_t cur_coor = maze_set_starting_point(maze, start);
+    stack_push(&stack, start);
 
     while (!stack_is_empty(&stack)) {
         maze_node_t avail_neighbors[4] = {DIRECTION_NONE};
