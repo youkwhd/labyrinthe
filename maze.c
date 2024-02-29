@@ -37,35 +37,6 @@ void maze_node_printc(maze_node_t node)
     printf(" ");
 }
 
-void maze_node_println(maze_node_t node)
-{
-    if (node == DIRECTION_NONE) {
-        puts("DIRECTION_NONE");
-        return;
-    }
-    if (node == DIRECTION_BLOCKED) {
-        puts("DIRECTION_BLOCKED");
-        return;
-    }
-    if (node == -1) {
-        puts("__DIRECTION_INVALID");
-        return;
-    }
-
-    if (node & DIRECTION_UP) {
-        puts("DIRECTION_UP");
-    }
-    if (node & DIRECTION_RIGHT) {
-        puts("DIRECTION_RIGHT");
-    }
-    if (node & DIRECTION_DOWN) {
-        puts("DIRECTION_DOWN");
-    }
-    if (node & DIRECTION_LEFT) {
-        puts("DIRECTION_LEFT");
-    }
-}
-
 void maze_println(maze_t *maze)
 {
     printf("\n");
