@@ -8,11 +8,11 @@
 
 void maze_node_printc(maze_node_t node)
 {
-    if (node == MAZE_NODE_DIR_NONE) {
+    if (node == DIRECTION_NONE) {
         printf("0 ");
         return;
     }
-    if (node == MAZE_NODE_DIR_BLOCKED) {
+    if (node == DIRECTION_BLOCKED) {
         printf("B ");
         return;
     }
@@ -21,16 +21,16 @@ void maze_node_printc(maze_node_t node)
         return;
     }
 
-    if (node & MAZE_NODE_DIR_UP) {
+    if (node & DIRECTION_UP) {
         printf("U");
     }
-    if (node & MAZE_NODE_DIR_RIGHT) {
+    if (node & DIRECTION_RIGHT) {
         printf("R");
     }
-    if (node & MAZE_NODE_DIR_DOWN) {
+    if (node & DIRECTION_DOWN) {
         printf("D");
     }
-    if (node & MAZE_NODE_DIR_LEFT) {
+    if (node & DIRECTION_LEFT) {
         printf("L");
     }
 
@@ -39,30 +39,30 @@ void maze_node_printc(maze_node_t node)
 
 void maze_node_println(maze_node_t node)
 {
-    if (node == MAZE_NODE_DIR_NONE) {
-        puts("MAZE_NODE_DIR_NONE");
+    if (node == DIRECTION_NONE) {
+        puts("DIRECTION_NONE");
         return;
     }
-    if (node == MAZE_NODE_DIR_BLOCKED) {
-        puts("MAZE_NODE_DIR_BLOCKED");
+    if (node == DIRECTION_BLOCKED) {
+        puts("DIRECTION_BLOCKED");
         return;
     }
     if (node == -1) {
-        puts("__MAZE_NODE_DIR_INVALID");
+        puts("__DIRECTION_INVALID");
         return;
     }
 
-    if (node & MAZE_NODE_DIR_UP) {
-        puts("MAZE_NODE_DIR_UP");
+    if (node & DIRECTION_UP) {
+        puts("DIRECTION_UP");
     }
-    if (node & MAZE_NODE_DIR_RIGHT) {
-        puts("MAZE_NODE_DIR_RIGHT");
+    if (node & DIRECTION_RIGHT) {
+        puts("DIRECTION_RIGHT");
     }
-    if (node & MAZE_NODE_DIR_DOWN) {
-        puts("MAZE_NODE_DIR_DOWN");
+    if (node & DIRECTION_DOWN) {
+        puts("DIRECTION_DOWN");
     }
-    if (node & MAZE_NODE_DIR_LEFT) {
-        puts("MAZE_NODE_DIR_LEFT");
+    if (node & DIRECTION_LEFT) {
+        puts("DIRECTION_LEFT");
     }
 }
 
@@ -111,20 +111,20 @@ void maze_get_available_neighbors(maze_t *maze, coordinate_t coor, maze_node_t n
 {
     *neighbors_len = 0;
 
-    if (((int)coor.y - 1 >= 0) && maze->body[coor.y - 1][coor.x] == MAZE_NODE_DIR_NONE) {
-        neighbors[(*neighbors_len)++] = 1 << (0 + 2);
+    if (((int)coor.y - 1 >= 0) && maze->body[coor.y - 1][coor.x] == DIRECTION_NONE) {
+        neighbors[(*neighbors_len)++] = DIRECTION_UP;
     }
 
-    if (((int)coor.x + 1 < maze->width) && maze->body[coor.y][coor.x + 1] == MAZE_NODE_DIR_NONE) {
-        neighbors[(*neighbors_len)++] = 1 << (1 + 2);
+    if (((int)coor.x + 1 < maze->width) && maze->body[coor.y][coor.x + 1] == DIRECTION_NONE) {
+        neighbors[(*neighbors_len)++] = DIRECTION_RIGHT;
     }
 
-    if (((int)coor.y + 1 < maze->height) && maze->body[coor.y + 1][coor.x] == MAZE_NODE_DIR_NONE) {
-        neighbors[(*neighbors_len)++] = 1 << (2 + 2);
+    if (((int)coor.y + 1 < maze->height) && maze->body[coor.y + 1][coor.x] == DIRECTION_NONE) {
+        neighbors[(*neighbors_len)++] = DIRECTION_DOWN;
     }
 
-    if (((int)coor.x - 1 >= 0) && maze->body[coor.y][coor.x - 1] == MAZE_NODE_DIR_NONE) {
-        neighbors[(*neighbors_len)++] = 1 << (3 + 2);
+    if (((int)coor.x - 1 >= 0) && maze->body[coor.y][coor.x - 1] == DIRECTION_NONE) {
+        neighbors[(*neighbors_len)++] = DIRECTION_LEFT;
     }
 }
 
@@ -135,7 +135,7 @@ void maze_init(maze_t *maze, uint16_t height, uint16_t width)
         maze->body[i] = malloc(sizeof(*maze->body[i]) * height);
 
         for (size_t j = 0; j < height; j++) {
-            maze->body[i][j] = MAZE_NODE_DIR_NONE;
+            maze->body[i][j] = DIRECTION_NONE;
         }
     }
 
@@ -152,7 +152,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     stack_t stack;
     stack_init(&stack, maze->height * maze->width);
 
-    maze_node_t __avail_neighbors[4] = {MAZE_NODE_DIR_NONE};
+    maze_node_t __avail_neighbors[4] = {DIRECTION_NONE};
     size_t __avail_neighbors_len = 0;
     maze_get_available_neighbors(maze, cur_coor, __avail_neighbors, &__avail_neighbors_len);
 
@@ -160,19 +160,19 @@ void maze_generate(maze_t *maze, coordinate_t start)
     maze_set_node_dir(maze, cur_coor, __dir);
     stack_push(&stack, cur_coor);
 
-    cur_coor.y -= __dir == MAZE_NODE_DIR_UP;
-    cur_coor.x += __dir == MAZE_NODE_DIR_RIGHT;
-    cur_coor.y += __dir == MAZE_NODE_DIR_DOWN;
-    cur_coor.x -= __dir == MAZE_NODE_DIR_LEFT;
+    cur_coor.y -= __dir == DIRECTION_UP;
+    cur_coor.x += __dir == DIRECTION_RIGHT;
+    cur_coor.y += __dir == DIRECTION_DOWN;
+    cur_coor.x -= __dir == DIRECTION_LEFT;
 
     while (!stack_is_empty(&stack)) {
-        maze_node_t avail_neighbors[4] = {MAZE_NODE_DIR_NONE};
+        maze_node_t avail_neighbors[4] = {DIRECTION_NONE};
         size_t avail_neighbors_len = 0;
         maze_get_available_neighbors(maze, cur_coor, avail_neighbors, &avail_neighbors_len);
 
         if (avail_neighbors_len == 0) {
-            if (maze_get(maze, cur_coor) == MAZE_NODE_DIR_NONE) {
-                maze_set_node_dir(maze, cur_coor, MAZE_NODE_DIR_BLOCKED);
+            if (maze_get(maze, cur_coor) == DIRECTION_NONE) {
+                maze_set_node_dir(maze, cur_coor, DIRECTION_BLOCKED);
             }
 
             cur_coor = stack_pop(&stack);
@@ -183,10 +183,10 @@ void maze_generate(maze_t *maze, coordinate_t start)
         maze_set_node_dir(maze, cur_coor, dir);
         stack_push(&stack, cur_coor);
 
-        cur_coor.y -= dir == MAZE_NODE_DIR_UP;
-        cur_coor.x += dir == MAZE_NODE_DIR_RIGHT;
-        cur_coor.y += dir == MAZE_NODE_DIR_DOWN;
-        cur_coor.x -= dir == MAZE_NODE_DIR_LEFT;
+        cur_coor.y -= dir == DIRECTION_UP;
+        cur_coor.x += dir == DIRECTION_RIGHT;
+        cur_coor.y += dir == DIRECTION_DOWN;
+        cur_coor.x -= dir == DIRECTION_LEFT;
     }
 
     maze_println(maze);

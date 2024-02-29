@@ -3,17 +3,10 @@
 
 #include <stdint.h>
 
+#include "direction.h"
 #include "coordinate.h"
 
-typedef enum maze_node_t {
-    MAZE_NODE_DIR_INVALID = -1,
-    MAZE_NODE_DIR_NONE = 0,
-    MAZE_NODE_DIR_BLOCKED = 1,
-    MAZE_NODE_DIR_UP = 1 << 2,
-    MAZE_NODE_DIR_RIGHT = 1 << 3,
-    MAZE_NODE_DIR_DOWN = 1 << 4,
-    MAZE_NODE_DIR_LEFT = 1 << 5,
-} maze_node_t;
+typedef direction_t maze_node_t;
 
 typedef struct maze_t {
     uint16_t height, width;
