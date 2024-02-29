@@ -3,17 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "labyrinthe.h"
 #include "maze.h"
 #include "coordinate.h"
 #include "stack.h"
-
-bool maze_node_dir_is_valid(maze_node_t prev, maze_node_t next)
-{
-    UNUSED(prev);
-    UNUSED(next);
-    return false;
-}
 
 void maze_node_printc(maze_node_t node)
 {
@@ -92,6 +84,11 @@ void maze_set_node_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
     maze->body[coor.y][coor.x] |= dir;
 }
 
+maze_node_t maze_get(maze_t *maze, coordinate_t coor)
+{
+    return maze->body[coor.y][coor.x];
+}
+
 void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_node_t *neighbors)
 {
     if ((int)coor.y - 1 >= 0) {
@@ -165,7 +162,7 @@ void maze_generate(maze_t *maze)
         maze_get_available_neighbors(maze, *cur_coor, avail_neighbors, &avail_neighbors_len);
 
         if (avail_neighbors_len == 0) {
-            if (maze->body[cur_coor->y][cur_coor->x] == MAZE_NODE_DIR_NONE) {
+            if (maze_get(maze, *cur_coor) == MAZE_NODE_DIR_NONE) {
                 maze_set_node_dir(maze, *cur_coor, MAZE_NODE_DIR_BLOCKED);
             }
 
