@@ -156,8 +156,8 @@ void maze_generate(maze_t *maze)
     stack_push(&stack, *cur_coor);
     cur_coor->x++;
 
-    for (; !stack_is_empty(&stack); ) {
-        maze_node_t avail_neighbors[4] = {0};
+    while (!stack_is_empty(&stack)) {
+        maze_node_t avail_neighbors[4] = {MAZE_NODE_DIR_NONE};
         size_t avail_neighbors_len = 0;
         maze_get_available_neighbors(maze, *cur_coor, avail_neighbors, &avail_neighbors_len);
 
