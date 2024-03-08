@@ -53,9 +53,19 @@ void maze_println(maze_t *maze)
     }
 }
 
+void __maze_str_set_open_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
+{
+    if (dir == DIRECTION_BLOCKED) {
+        return;
+    }
+
+    maze->_maze_str[(2 * coor.y + (dir == DIRECTION_DOWN) - (dir == DIRECTION_UP)) + 1][(2 * coor.x + (dir == DIRECTION_RIGHT) - (dir == DIRECTION_LEFT)) + 1] = ' ';
+}
+
 void maze_set_node_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
 {
     maze->body[coor.y][coor.x] |= dir;
+    __maze_str_set_open_dir(maze, coor, dir);
 }
 
 maze_node_t maze_get(maze_t *maze, coordinate_t coor)
@@ -142,8 +152,6 @@ void __maze_gen_str(maze_t *maze)
         _maze_gen_str_middle_border(maze, maze->_maze_str[i]);
         _maze_gen_str_upper_border(maze, maze->_maze_str[i + 1]);
     }
-
-    __maze_println(maze);
 }
 
 void maze_init(maze_t *maze, uint16_t height, uint16_t width)
@@ -224,6 +232,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
         cur_coor.x -= dir == DIRECTION_LEFT;
     }
 
+    __maze_println(maze);
     maze_println(maze);
     stack_cleanup(&stack);
 }
