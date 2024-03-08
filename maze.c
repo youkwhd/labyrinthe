@@ -232,8 +232,6 @@ void maze_generate(maze_t *maze, coordinate_t start)
         cur_coor.x -= dir == DIRECTION_LEFT;
     }
 
-    __maze_println(maze);
-    maze_println(maze);
     stack_cleanup(&stack);
 }
 
