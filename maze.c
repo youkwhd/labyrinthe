@@ -6,10 +6,6 @@
 #include "maze.h"
 #include "stack.h"
 
-#define MAZE_NODE_WIDTH 3
-#define MAZE_NODE_HEIGHT 3
-#define MAZE_NODE_SIZE (MAZE_NODE_WIDTH * MAZE_NODE_HEIGHT)
-
 void maze_cell_printc(maze_cell_t cell)
 {
     if (cell == DIRECTION_NONE) {
