@@ -190,11 +190,7 @@ coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
     maze_node_t dir = avail_neighbors[rand() % avail_neighbors_len];
     maze_set_node_dir(maze, start, dir);
 
-    start.y -= dir == DIRECTION_UP;
-    start.x += dir == DIRECTION_RIGHT;
-    start.y += dir == DIRECTION_DOWN;
-    start.x -= dir == DIRECTION_LEFT;
-
+    coordinate_move_to(&start, dir);
     return start;
 }
 
@@ -225,11 +221,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
         maze_node_t dir = avail_neighbors[rand() % avail_neighbors_len];
         maze_set_node_dir(maze, cur_coor, dir);
         stack_push(&stack, cur_coor);
-
-        cur_coor.y -= dir == DIRECTION_UP;
-        cur_coor.x += dir == DIRECTION_RIGHT;
-        cur_coor.y += dir == DIRECTION_DOWN;
-        cur_coor.x -= dir == DIRECTION_LEFT;
+        coordinate_move_to(&cur_coor, dir);
     }
 
     stack_cleanup(&stack);
