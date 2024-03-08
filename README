@@ -1,4 +1,9 @@
 labyrinthe
 ==========
 
-simple game, find the exit
+Maze generation
+
+Quick Start
+-----------
+
+    make && ./labyrinthe
