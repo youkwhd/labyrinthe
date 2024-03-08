@@ -10,31 +10,31 @@
 #define MAZE_NODE_HEIGHT 3
 #define MAZE_NODE_SIZE (MAZE_NODE_WIDTH * MAZE_NODE_HEIGHT)
 
-void maze_node_printc(maze_node_t node)
+void maze_cell_printc(maze_cell_t cell)
 {
-    if (node == DIRECTION_NONE) {
+    if (cell == DIRECTION_NONE) {
         printf("0 ");
         return;
     }
-    if (node == DIRECTION_BLOCKED) {
+    if (cell == DIRECTION_BLOCKED) {
         printf("B ");
         return;
     }
-    if (node == -1) {
+    if (cell == -1) {
         printf("! ");
         return;
     }
 
-    if (node & DIRECTION_UP) {
+    if (cell & DIRECTION_UP) {
         printf("U");
     }
-    if (node & DIRECTION_RIGHT) {
+    if (cell & DIRECTION_RIGHT) {
         printf("R");
     }
-    if (node & DIRECTION_DOWN) {
+    if (cell & DIRECTION_DOWN) {
         printf("D");
     }
-    if (node & DIRECTION_LEFT) {
+    if (cell & DIRECTION_LEFT) {
         printf("L");
     }
 
@@ -46,14 +46,14 @@ void maze_println(maze_t *maze)
     printf("\n");
     for (int i = 0; i < maze->width; i++) {
         for (int j = 0; j < maze->height; j++) {
-            maze_node_printc(maze->body[i][j]);
+            maze_cell_printc(maze->body[i][j]);
         }
 
         printf("\n");
     }
 }
 
-void __maze_str_set_open_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
+void __maze_str_set_open_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 {
     if (dir == DIRECTION_BLOCKED) {
         return;
@@ -62,18 +62,18 @@ void __maze_str_set_open_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
     maze->_maze_str[(2 * coor.y + (dir == DIRECTION_DOWN) - (dir == DIRECTION_UP)) + 1][(2 * coor.x + (dir == DIRECTION_RIGHT) - (dir == DIRECTION_LEFT)) + 1] = ' ';
 }
 
-void maze_set_node_dir(maze_t *maze, coordinate_t coor, maze_node_t dir)
+void maze_set_cell_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 {
     maze->body[coor.y][coor.x] |= dir;
     __maze_str_set_open_dir(maze, coor, dir);
 }
 
-maze_node_t maze_get(maze_t *maze, coordinate_t coor)
+maze_cell_t maze_get(maze_t *maze, coordinate_t coor)
 {
     return maze->body[coor.y][coor.x];
 }
 
-void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_node_t *neighbors)
+void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t *neighbors)
 {
     if ((int)coor.y - 1 >= 0) {
         neighbors[0] = maze->body[coor.y - 1][coor.x];
@@ -92,7 +92,7 @@ void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_node_t *neighbors)
     }
 }
 
-void maze_get_available_neighbors(maze_t *maze, coordinate_t coor, maze_node_t neighbors[4], size_t *neighbors_len)
+void maze_get_available_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t neighbors[4], size_t *neighbors_len)
 {
     *neighbors_len = 0;
 
@@ -183,12 +183,12 @@ void maze_init(maze_t *maze, uint16_t height, uint16_t width)
 
 coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
 {
-    maze_node_t avail_neighbors[4] = {DIRECTION_NONE};
+    maze_cell_t avail_neighbors[4] = {DIRECTION_NONE};
     size_t avail_neighbors_len = 0;
     maze_get_available_neighbors(maze, start, avail_neighbors, &avail_neighbors_len);
 
-    maze_node_t dir = avail_neighbors[rand() % avail_neighbors_len];
-    maze_set_node_dir(maze, start, dir);
+    maze_cell_t dir = avail_neighbors[rand() % avail_neighbors_len];
+    maze_set_cell_dir(maze, start, dir);
 
     coordinate_move_to(&start, dir);
     return start;
@@ -205,21 +205,21 @@ void maze_generate(maze_t *maze, coordinate_t start)
     stack_push(&stack, start);
 
     while (!stack_is_empty(&stack)) {
-        maze_node_t avail_neighbors[4] = {DIRECTION_NONE};
+        maze_cell_t avail_neighbors[4] = {DIRECTION_NONE};
         size_t avail_neighbors_len = 0;
         maze_get_available_neighbors(maze, cur_coor, avail_neighbors, &avail_neighbors_len);
 
         if (avail_neighbors_len == 0) {
             if (maze_get(maze, cur_coor) == DIRECTION_NONE) {
-                maze_set_node_dir(maze, cur_coor, DIRECTION_BLOCKED);
+                maze_set_cell_dir(maze, cur_coor, DIRECTION_BLOCKED);
             }
 
             cur_coor = stack_pop(&stack);
             continue;
         }
 
-        maze_node_t dir = avail_neighbors[rand() % avail_neighbors_len];
-        maze_set_node_dir(maze, cur_coor, dir);
+        maze_cell_t dir = avail_neighbors[rand() % avail_neighbors_len];
+        maze_set_cell_dir(maze, cur_coor, dir);
         stack_push(&stack, cur_coor);
         coordinate_move_to(&cur_coor, dir);
     }

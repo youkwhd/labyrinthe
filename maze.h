@@ -7,11 +7,11 @@
 #include "direction.h"
 #include "coordinate.h"
 
-typedef direction_t maze_node_t;
+typedef direction_t maze_cell_t;
 
 typedef struct maze_t {
     uint16_t height, width;
-    maze_node_t **body;
+    maze_cell_t **body;
 
     char **_maze_str;
     size_t _maze_str_width, _maze_str_height;
