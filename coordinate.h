@@ -8,6 +8,7 @@ typedef struct coordinate_t {
 } coordinate_t;
 
 coordinate_t *coordinate_init(int x, int y);
+void coordinate_println(coordinate_t c);
 void coordinate_move_to(coordinate_t *c, direction_t dir);
 void coordinate_cleanup(coordinate_t *c);
 

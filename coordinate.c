@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "coordinate.h"
 
@@ -9,6 +10,12 @@ coordinate_t *coordinate_init(int x, int y)
     c->y = y;
 
     return c;
+}
+
+void coordinate_println(coordinate_t c)
+{
+    printf("X: %d\n", c.x);
+    printf("Y: %d\n", c.y);
 }
 
 void coordinate_move_to(coordinate_t *c, direction_t dir)
