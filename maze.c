@@ -40,8 +40,8 @@ void maze_cell_printc(maze_cell_t cell)
 void maze_println(maze_t *maze)
 {
     printf("\n");
-    for (int i = 0; i < maze->width; i++) {
-        for (int j = 0; j < maze->height; j++) {
+    for (int i = 0; i < maze->height; i++) {
+        for (int j = 0; j < maze->width; j++) {
             maze_cell_printc(maze->body[i][j]);
         }
 
@@ -150,13 +150,13 @@ void __maze_gen_str(maze_t *maze)
     }
 }
 
-void maze_init(maze_t *maze, uint16_t height, uint16_t width)
+void maze_init(maze_t *maze, uint16_t width, uint16_t height)
 {
-    maze->body = malloc(sizeof(*maze->body) * width);
-    for (size_t i = 0; i < width; i++) {
-        maze->body[i] = malloc(sizeof(*maze->body[i]) * height);
+    maze->body = malloc(sizeof(*maze->body) * height);
+    for (size_t i = 0; i < height; i++) {
+        maze->body[i] = malloc(sizeof(*maze->body[i]) * width);
 
-        for (size_t j = 0; j < height; j++) {
+        for (size_t j = 0; j < width; j++) {
             maze->body[i][j] = DIRECTION_NONE;
         }
     }
@@ -166,8 +166,8 @@ void maze_init(maze_t *maze, uint16_t height, uint16_t width)
 
     /* TODO: explain the pluses
      */
-    maze->_maze_str_width = maze->width * 2 + 1 + 1;
     maze->_maze_str_height = maze->height * 2 + 1;
+    maze->_maze_str_width = maze->width * 2 + 1 + 1;
 
     maze->_maze_str = malloc((sizeof *maze->_maze_str) * maze->_maze_str_height);
     for (size_t i = 0; i < maze->_maze_str_height; i++) {
@@ -195,7 +195,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     srand(time(NULL));
 
     stack_t stack;
-    stack_init(&stack, maze->height * maze->width);
+    stack_init(&stack, maze->width * maze->height);
 
     coordinate_t cur_coor = maze_set_starting_point(maze, start);
     stack_push(&stack, start);
@@ -225,7 +225,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
 
 void maze_cleanup(maze_t *maze)
 {
-    for (size_t i = 0; i < maze->width; i++) {
+    for (size_t i = 0; i < maze->height; i++) {
         free(maze->body[i]);
     }
 
