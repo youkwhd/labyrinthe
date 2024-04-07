@@ -190,6 +190,81 @@ coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
     return start;
 }
 
+void maze_open_wall(maze_t *maze, coordinate_t coor)
+{
+    if (coor.y == 0) {
+        __maze_str_set_open_dir(maze, coor, DIRECTION_UP);
+        return;
+    }
+    if (coor.y == maze->height - 1) {
+        __maze_str_set_open_dir(maze, coor, DIRECTION_DOWN);
+        return;
+    }
+    if (coor.x == 0) {
+        __maze_str_set_open_dir(maze, coor, DIRECTION_LEFT);
+        return;
+    }
+    if (coor.x == maze->width - 1) {
+        __maze_str_set_open_dir(maze, coor, DIRECTION_RIGHT);
+        return;
+    }
+}
+
+void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_ends_length)
+{
+    if (maze->height <= 0 || maze->width <= 0)
+        return;
+
+#define __DEAD_END_ARR_INITIAL_LEN 5
+    *dead_ends_length = 0;
+    size_t __dead_ends_length = __DEAD_END_ARR_INITIAL_LEN;
+    *dead_ends = malloc(sizeof(**dead_ends) * __dead_ends_length);
+
+    for (int i = 1; i < maze->width - 1; i++) {
+        if (maze->body[0][i] == DIRECTION_BLOCKED) {
+            if (*dead_ends_length >= __dead_ends_length) {
+                __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
+                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+            }
+
+            (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){i, 0};
+        }
+    }
+
+    for (int i = 1; i < maze->width - 1; i++) {
+        if (maze->body[maze->height - 1][i] == DIRECTION_BLOCKED) {
+            if (*dead_ends_length >= __dead_ends_length) {
+                __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
+                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+            }
+
+            (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){i, maze->height - 1};
+        }
+    }
+
+    for (int i = 0; i < maze->height; i++) {
+        if (maze->body[i][0] == DIRECTION_BLOCKED) {
+            if (*dead_ends_length >= __dead_ends_length) {
+                __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
+                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+            }
+
+            (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){0, i};
+        }
+    }
+
+    for (int i = 0; i < maze->height; i++) {
+        if (maze->body[i][maze->width - 1] == DIRECTION_BLOCKED) {
+            if (*dead_ends_length >= __dead_ends_length) {
+                __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
+                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+            }
+
+            (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){maze->width - 1, i};
+        }
+    }
+}
+
 void maze_generate(maze_t *maze, coordinate_t start)
 {
     srand(time(NULL));
@@ -198,6 +273,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     stack_init(&stack, maze->width * maze->height);
 
     coordinate_t cur_coor = maze_set_starting_point(maze, start);
+    maze_open_wall(maze, start);
     stack_push(&stack, start);
 
     while (!stack_is_empty(&stack)) {
@@ -220,6 +296,14 @@ void maze_generate(maze_t *maze, coordinate_t start)
         coordinate_move_to(&cur_coor, dir);
     }
 
+    coordinate_t *dead_ends = NULL;
+    size_t dead_ends_length = 0;
+    maze_get_dead_ends(maze, &dead_ends, &dead_ends_length);
+
+    coordinate_t finish = dead_ends[rand() % dead_ends_length];
+    maze_open_wall(maze, finish);
+
+    free(dead_ends);
     stack_cleanup(&stack);
 }
 
