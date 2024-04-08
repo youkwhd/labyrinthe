@@ -13,13 +13,13 @@ typedef struct maze_t {
     uint16_t height, width;
     maze_cell_t **body;
 
-    char **_maze_str;
-    size_t _maze_str_width, _maze_str_height;
+    char **__maze_ui;
+    size_t __maze_ui_width, __maze_ui_height;
 } maze_t;
 
 void maze_init(maze_t *maze, uint16_t width, uint16_t height);
 void maze_generate(maze_t *maze, coordinate_t start);
-void __maze_println(maze_t *maze);
+void __maze_ui_println(maze_t *maze);
 void maze_cleanup(maze_t *maze);
 
 #endif // __LABYRINTHE_MAZE_H
