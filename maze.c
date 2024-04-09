@@ -42,7 +42,7 @@ void maze_println(maze_t *maze)
     printf("\n");
     for (int i = 0; i < maze->height; i++) {
         for (int j = 0; j < maze->width; j++) {
-            maze_cell_printc(maze->body[i][j]);
+            maze_cell_printc(maze->grid[i][j]);
         }
 
         printf("\n");
@@ -60,31 +60,31 @@ void __maze_ui_set_open_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 
 void maze_set_cell_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 {
-    maze->body[coor.y][coor.x] |= dir;
+    maze->grid[coor.y][coor.x] |= dir;
     __maze_ui_set_open_dir(maze, coor, dir);
 }
 
 maze_cell_t maze_get(maze_t *maze, coordinate_t coor)
 {
-    return maze->body[coor.y][coor.x];
+    return maze->grid[coor.y][coor.x];
 }
 
 void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t *neighbors)
 {
     if ((int)coor.y - 1 >= 0) {
-        neighbors[0] = maze->body[coor.y - 1][coor.x];
+        neighbors[0] = maze->grid[coor.y - 1][coor.x];
     }
 
     if ((int)coor.x + 1 < maze->width) {
-        neighbors[1] = maze->body[coor.y][coor.x + 1];
+        neighbors[1] = maze->grid[coor.y][coor.x + 1];
     }
 
     if ((int)coor.y + 1 < maze->height) {
-        neighbors[2] = maze->body[coor.y + 1][coor.x];
+        neighbors[2] = maze->grid[coor.y + 1][coor.x];
     }
 
     if ((int)coor.x - 1 >= 0) {
-        neighbors[3] = maze->body[coor.y][coor.x - 1];
+        neighbors[3] = maze->grid[coor.y][coor.x - 1];
     }
 }
 
@@ -92,19 +92,19 @@ void maze_get_available_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t n
 {
     *neighbors_len = 0;
 
-    if (((int)coor.y - 1 >= 0) && maze->body[coor.y - 1][coor.x] == DIRECTION_NONE) {
+    if (((int)coor.y - 1 >= 0) && maze->grid[coor.y - 1][coor.x] == DIRECTION_NONE) {
         neighbors[(*neighbors_len)++] = DIRECTION_UP;
     }
 
-    if (((int)coor.x + 1 < maze->width) && maze->body[coor.y][coor.x + 1] == DIRECTION_NONE) {
+    if (((int)coor.x + 1 < maze->width) && maze->grid[coor.y][coor.x + 1] == DIRECTION_NONE) {
         neighbors[(*neighbors_len)++] = DIRECTION_RIGHT;
     }
 
-    if (((int)coor.y + 1 < maze->height) && maze->body[coor.y + 1][coor.x] == DIRECTION_NONE) {
+    if (((int)coor.y + 1 < maze->height) && maze->grid[coor.y + 1][coor.x] == DIRECTION_NONE) {
         neighbors[(*neighbors_len)++] = DIRECTION_DOWN;
     }
 
-    if (((int)coor.x - 1 >= 0) && maze->body[coor.y][coor.x - 1] == DIRECTION_NONE) {
+    if (((int)coor.x - 1 >= 0) && maze->grid[coor.y][coor.x - 1] == DIRECTION_NONE) {
         neighbors[(*neighbors_len)++] = DIRECTION_LEFT;
     }
 }
@@ -152,12 +152,12 @@ void __maze_gen_ui(maze_t *maze)
 
 void maze_init(maze_t *maze, uint16_t width, uint16_t height)
 {
-    maze->body = malloc(sizeof(*maze->body) * height);
+    maze->grid = malloc(sizeof(*maze->grid) * height);
     for (size_t i = 0; i < height; i++) {
-        maze->body[i] = malloc(sizeof(*maze->body[i]) * width);
+        maze->grid[i] = malloc(sizeof(*maze->grid[i]) * width);
 
         for (size_t j = 0; j < width; j++) {
-            maze->body[i][j] = DIRECTION_NONE;
+            maze->grid[i][j] = DIRECTION_NONE;
         }
     }
 
@@ -221,7 +221,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     *dead_ends = malloc(sizeof(**dead_ends) * __dead_ends_length);
 
     for (int i = 1; i < maze->width - 1; i++) {
-        if (maze->body[0][i] == DIRECTION_BLOCKED) {
+        if (maze->grid[0][i] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, __dead_ends_length);
@@ -232,7 +232,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     }
 
     for (int i = 1; i < maze->width - 1; i++) {
-        if (maze->body[maze->height - 1][i] == DIRECTION_BLOCKED) {
+        if (maze->grid[maze->height - 1][i] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, __dead_ends_length);
@@ -243,7 +243,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     }
 
     for (int i = 0; i < maze->height; i++) {
-        if (maze->body[i][0] == DIRECTION_BLOCKED) {
+        if (maze->grid[i][0] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, __dead_ends_length);
@@ -254,7 +254,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     }
 
     for (int i = 0; i < maze->height; i++) {
-        if (maze->body[i][maze->width - 1] == DIRECTION_BLOCKED) {
+        if (maze->grid[i][maze->width - 1] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, __dead_ends_length);
@@ -310,10 +310,10 @@ void maze_generate(maze_t *maze, coordinate_t start)
 void maze_cleanup(maze_t *maze)
 {
     for (size_t i = 0; i < maze->height; i++) {
-        free(maze->body[i]);
+        free(maze->grid[i]);
     }
 
-    free(maze->body);
+    free(maze->grid);
 
     for (size_t i = 0; i < maze->__maze_ui_height; i++) {
         free(maze->__maze_ui[i]);

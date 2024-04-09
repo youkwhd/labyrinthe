@@ -11,7 +11,7 @@ typedef direction_t maze_cell_t;
 
 typedef struct maze_t {
     uint16_t height, width;
-    maze_cell_t **body;
+    maze_cell_t **grid;
 
     char **__maze_ui;
     size_t __maze_ui_width, __maze_ui_height;
