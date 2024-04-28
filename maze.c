@@ -6,49 +6,6 @@
 #include "maze.h"
 #include "stack.h"
 
-void maze_cell_printc(maze_cell_t cell)
-{
-    if (cell == DIRECTION_NONE) {
-        printf("0 ");
-        return;
-    }
-    if (cell == DIRECTION_BLOCKED) {
-        printf("B ");
-        return;
-    }
-    if (cell == -1) {
-        printf("! ");
-        return;
-    }
-
-    if (cell & DIRECTION_UP) {
-        printf("U");
-    }
-    if (cell & DIRECTION_RIGHT) {
-        printf("R");
-    }
-    if (cell & DIRECTION_DOWN) {
-        printf("D");
-    }
-    if (cell & DIRECTION_LEFT) {
-        printf("L");
-    }
-
-    printf(" ");
-}
-
-void maze_println(maze_t *maze)
-{
-    printf("\n");
-    for (int i = 0; i < maze->height; i++) {
-        for (int j = 0; j < maze->width; j++) {
-            maze_cell_printc(maze->grid[i][j]);
-        }
-
-        printf("\n");
-    }
-}
-
 void __maze_ui_set_open_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 {
     if (dir == DIRECTION_BLOCKED) {
@@ -133,7 +90,7 @@ void __maze_gen_ui_middle_border(maze_t *maze, char *str)
     str[maze->__maze_ui_width - 1] = '\0';
 }
 
-void __maze_ui_println(maze_t *maze)
+void maze_ui_println(maze_t *maze)
 {
     for (size_t i = 0; i < maze->__maze_ui_height; i++) {
         printf("%s\n", maze->__maze_ui[i]);
@@ -152,6 +109,9 @@ void __maze_gen_ui(maze_t *maze)
 
 void maze_init(maze_t *maze, uint16_t width, uint16_t height)
 {
+    maze->height = height;
+    maze->width = width;
+
     maze->grid = malloc(sizeof(*maze->grid) * height);
     for (size_t i = 0; i < height; i++) {
         maze->grid[i] = malloc(sizeof(*maze->grid[i]) * width);
@@ -160,9 +120,6 @@ void maze_init(maze_t *maze, uint16_t width, uint16_t height)
             maze->grid[i][j] = DIRECTION_NONE;
         }
     }
-
-    maze->height = height;
-    maze->width = width;
 
     /* TODO: explain the pluses
      */
@@ -215,6 +172,9 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     if (maze->height <= 0 || maze->width <= 0)
         return;
 
+/* TODO:
+ * dynamic array is really painful
+ */
 #define __DEAD_END_ARR_INITIAL_LEN 5
     *dead_ends_length = 0;
     size_t __dead_ends_length = __DEAD_END_ARR_INITIAL_LEN;
@@ -229,9 +189,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){i, 0};
         }
-    }
 
-    for (int i = 1; i < maze->width - 1; i++) {
         if (maze->grid[maze->height - 1][i] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
@@ -251,9 +209,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){0, i};
         }
-    }
 
-    for (int i = 0; i < maze->height; i++) {
         if (maze->grid[i][maze->width - 1] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;

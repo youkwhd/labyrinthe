@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     maze_t maze;
     maze_init(&maze, MAZE_WIDTH, MAZE_HEIGHT);
     maze_generate(&maze, (coordinate_t){ 0, 0 });
-    __maze_ui_println(&maze);
+    maze_ui_println(&maze);
 
     maze_cleanup(&maze);
     return 0;
