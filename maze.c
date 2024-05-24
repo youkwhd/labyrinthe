@@ -6,10 +6,75 @@
 #include "maze.h"
 #include "stack.h"
 
+void maze_println_horizontal_corner_border(maze_t *maze, int row)
+{
+    printf("+");
+    for (int i = 0; i < maze->width; i++) {
+        if (maze->grid[row][i] & DIRECTION_OPENED) {
+            printf(" ");
+        } else {
+            printf("-");
+        }
+
+        printf("+");
+    }
+    printf("\n");
+}
+
+void maze_println_horizontal_border(maze_t *maze, int row)
+{
+    printf("+");
+    for (int i = 0; i < maze->width; i++) {
+        if (maze->grid[row][i] & DIRECTION_DOWN || (row + 1 < maze->height && maze->grid[row + 1][i] & DIRECTION_UP)) {
+            printf(" ");
+        } else {
+            printf("-");
+        }
+
+        printf("+");
+    }
+    printf("\n");
+}
+
+void maze_println_vertical_border(maze_t *maze, int row)
+{
+    if ((row >= 1 && row < maze->height - 1) && maze->grid[row][0] & DIRECTION_OPENED) {
+        printf(" ");
+    } else {
+        printf("|");
+    }
+
+    for (int i = 0; i < maze->width; i++) {
+        bool is_wall_open = (i == maze->width - 1 && (row >= 1 && row < maze->height - 1) && maze->grid[row][i] & DIRECTION_OPENED);
+
+        printf(" ");
+
+        if (maze->grid[row][i] & DIRECTION_RIGHT || (i + 1 < maze->width && maze->grid[row][i + 1] & DIRECTION_LEFT) || is_wall_open) {
+            printf(" ");
+        } else {
+            printf("|");
+        }
+    }
+    printf("\n");
+}
+
+void maze_println(maze_t *maze)
+{
+    maze_println_horizontal_corner_border(maze, 0);
+
+    for (int i = 0; i < maze->height; i++) {
+        maze_println_vertical_border(maze, i);
+
+        if (i != maze->height - 1)
+            maze_println_horizontal_border(maze, i);
+    }
+
+    maze_println_horizontal_corner_border(maze, maze->height - 1);
+}
+
 void maze_set_cell_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 {
     maze->grid[coor.y][coor.x] |= dir;
-    maze_tui_set_open_dir(maze->tui, coor, dir);
 }
 
 maze_cell_t maze_get(maze_t *maze, coordinate_t coor)
@@ -70,8 +135,6 @@ void maze_init(maze_t *maze, uint16_t width, uint16_t height)
             maze->grid[i][j] = DIRECTION_NONE;
         }
     }
-
-    maze->tui = maze_tui_init(width, height);
 }
 
 coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
@@ -85,11 +148,6 @@ coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
 
     coordinate_move_to(&start, dir);
     return start;
-}
-
-void maze_println(maze_t *maze)
-{
-    maze_tui_println(maze->tui);
 }
 
 void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_ends_length)
@@ -154,7 +212,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     stack_init(&stack, maze->width * maze->height);
 
     coordinate_t cur_coor = maze_set_starting_point(maze, start);
-    maze_tui_open_wall(maze->tui, maze->width, maze->height, start);
+    maze_set_cell_dir(maze, start, DIRECTION_OPENED);
     stack_push(&stack, start);
 
     while (!stack_is_empty(&stack)) {
@@ -182,7 +240,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     maze_get_dead_ends(maze, &dead_ends, &dead_ends_length);
 
     coordinate_t finish = dead_ends[rand() % dead_ends_length];
-    maze_tui_open_wall(maze->tui, maze->width, maze->height, finish);
+    maze_set_cell_dir(maze, finish, DIRECTION_OPENED);
 
     free(dead_ends);
     stack_cleanup(&stack);
@@ -195,5 +253,4 @@ void maze_cleanup(maze_t *maze)
     }
 
     free(maze->grid);
-    maze_tui_cleanup(maze->tui);
 }
