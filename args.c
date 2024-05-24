@@ -131,4 +131,14 @@ void args_parse(args_t *args, int argc, char **argv)
             break;
         }
     }
+
+    if (args->starting_point.x < 0 || args->starting_point.y < 0) {
+        fprintf(stderr, "%s: starting point cannot be negative\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    if (args->ending_point.x < 0 || args->ending_point.y < 0) {
+        fprintf(stderr, "%s: ending point cannot be negative\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
 }
