@@ -26,6 +26,25 @@ void coordinate_move_to(coordinate_t *c, direction_t dir)
     c->x -= dir == DIRECTION_LEFT;
 }
 
+bool coordinate_equal(coordinate_t c1, coordinate_t c2)
+{
+    return c1.x == c2.x && c1.y == c2.y;
+}
+
+coordinate_t coordinate_parse_from_string(char *str)
+{
+    coordinate_t c = {0};
+
+    if (sscanf(str, "%d,%d", &c.x, &c.y) != 2) {
+        /* TODO: print progname instead
+         */
+        fprintf(stderr, "coordinate_parse_from_string(): could not parse coordinate\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return c;
+}
+
 void coordinate_cleanup(coordinate_t *c)
 {
     free(c);

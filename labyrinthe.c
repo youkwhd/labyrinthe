@@ -1,4 +1,5 @@
 #include "maze.h"
+#include "args.h"
 #include "coordinate.h"
 #include "labyrinthe.h"
 
@@ -7,8 +8,8 @@
 
 int main(int argc, char **argv)
 {
-    UNUSED(argc);
-    UNUSED(argv);
+    args_t args;
+    args_parse(&args, argc, argv);
 
     maze_t maze;
     maze_init(&maze, MAZE_WIDTH, MAZE_HEIGHT);
