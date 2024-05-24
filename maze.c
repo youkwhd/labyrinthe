@@ -6,19 +6,10 @@
 #include "maze.h"
 #include "stack.h"
 
-void __maze_ui_set_open_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
-{
-    if (dir == DIRECTION_BLOCKED) {
-        return;
-    }
-
-    maze->__maze_ui[(2 * coor.y + (dir == DIRECTION_DOWN) - (dir == DIRECTION_UP)) + 1][(2 * coor.x + (dir == DIRECTION_RIGHT) - (dir == DIRECTION_LEFT)) + 1] = ' ';
-}
-
 void maze_set_cell_dir(maze_t *maze, coordinate_t coor, maze_cell_t dir)
 {
     maze->grid[coor.y][coor.x] |= dir;
-    __maze_ui_set_open_dir(maze, coor, dir);
+    maze_tui_set_open_dir(maze->tui, coor, dir);
 }
 
 maze_cell_t maze_get(maze_t *maze, coordinate_t coor)
@@ -66,53 +57,12 @@ void maze_get_available_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t n
     }
 }
 
-void __maze_gen_ui_upper_border(maze_t *maze, char *str)
-{
-    str[0] = '*';
-
-    for (size_t i = 1; i < maze->__maze_ui_width - 1; i += 2) {
-        str[i] = '-';
-        str[i + 1] = '*';
-    }
-
-    str[maze->__maze_ui_width - 1] = '\0';
-}
-
-void __maze_gen_ui_middle_border(maze_t *maze, char *str)
-{
-    str[0] = '|';
-
-    for (size_t i = 1; i < maze->__maze_ui_width - 1; i += 2) {
-        str[i] = ' ';
-        str[i + 1] = '|';
-    }
-
-    str[maze->__maze_ui_width - 1] = '\0';
-}
-
-void maze_ui_println(maze_t *maze)
-{
-    for (size_t i = 0; i < maze->__maze_ui_height; i++) {
-        printf("%s\n", maze->__maze_ui[i]);
-    }
-}
-
-void __maze_gen_ui(maze_t *maze)
-{
-    __maze_gen_ui_upper_border(maze, maze->__maze_ui[0]);
-
-    for (size_t i = 1; i < maze->__maze_ui_height; i += 2) {
-        __maze_gen_ui_middle_border(maze, maze->__maze_ui[i]);
-        __maze_gen_ui_upper_border(maze, maze->__maze_ui[i + 1]);
-    }
-}
-
 void maze_init(maze_t *maze, uint16_t width, uint16_t height)
 {
-    maze->height = height;
     maze->width = width;
-
+    maze->height = height;
     maze->grid = malloc(sizeof(*maze->grid) * height);
+
     for (size_t i = 0; i < height; i++) {
         maze->grid[i] = malloc(sizeof(*maze->grid[i]) * width);
 
@@ -121,17 +71,7 @@ void maze_init(maze_t *maze, uint16_t width, uint16_t height)
         }
     }
 
-    /* TODO: explain the pluses
-     */
-    maze->__maze_ui_height = maze->height * 2 + 1;
-    maze->__maze_ui_width = maze->width * 2 + 1 + 1;
-
-    maze->__maze_ui = malloc((sizeof *maze->__maze_ui) * maze->__maze_ui_height);
-    for (size_t i = 0; i < maze->__maze_ui_height; i++) {
-        maze->__maze_ui[i] = malloc((sizeof *maze->__maze_ui) * maze->__maze_ui_width);
-    }
-
-    __maze_gen_ui(maze);
+    maze->tui = maze_tui_init(width, height);
 }
 
 coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
@@ -147,24 +87,9 @@ coordinate_t maze_set_starting_point(maze_t *maze, coordinate_t start)
     return start;
 }
 
-void __maze_ui_open_wall(maze_t *maze, coordinate_t coor)
+void maze_println(maze_t *maze)
 {
-    if (coor.y == 0) {
-        __maze_ui_set_open_dir(maze, coor, DIRECTION_UP);
-        return;
-    }
-    if (coor.y == maze->height - 1) {
-        __maze_ui_set_open_dir(maze, coor, DIRECTION_DOWN);
-        return;
-    }
-    if (coor.x == 0) {
-        __maze_ui_set_open_dir(maze, coor, DIRECTION_LEFT);
-        return;
-    }
-    if (coor.x == maze->width - 1) {
-        __maze_ui_set_open_dir(maze, coor, DIRECTION_RIGHT);
-        return;
-    }
+    maze_tui_println(maze->tui);
 }
 
 void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_ends_length)
@@ -229,7 +154,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     stack_init(&stack, maze->width * maze->height);
 
     coordinate_t cur_coor = maze_set_starting_point(maze, start);
-    __maze_ui_open_wall(maze, start);
+    maze_tui_open_wall(maze->tui, maze->width, maze->height, start);
     stack_push(&stack, start);
 
     while (!stack_is_empty(&stack)) {
@@ -257,7 +182,7 @@ void maze_generate(maze_t *maze, coordinate_t start)
     maze_get_dead_ends(maze, &dead_ends, &dead_ends_length);
 
     coordinate_t finish = dead_ends[rand() % dead_ends_length];
-    __maze_ui_open_wall(maze, finish);
+    maze_tui_open_wall(maze->tui, maze->width, maze->height, finish);
 
     free(dead_ends);
     stack_cleanup(&stack);
@@ -270,10 +195,5 @@ void maze_cleanup(maze_t *maze)
     }
 
     free(maze->grid);
-
-    for (size_t i = 0; i < maze->__maze_ui_height; i++) {
-        free(maze->__maze_ui[i]);
-    }
-
-    free(maze->__maze_ui);
+    maze_tui_cleanup(maze->tui);
 }
