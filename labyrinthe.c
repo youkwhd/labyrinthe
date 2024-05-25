@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     maze_init(&maze, MAZE_WIDTH, MAZE_HEIGHT);
     coordinate_t end = maze_generate(&maze, args.starting_point);
     maze_println(&maze);
-    maze_solve(&maze, args.starting_point, end, MAZE_STRATEGY_A_STAR);
+    maze_solve(&maze, args.starting_point, end, MAZE_SOLVING_STRATEGY_A_STAR);
 
     maze_cleanup(&maze);
     return 0;
