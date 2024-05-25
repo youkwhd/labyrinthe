@@ -13,6 +13,9 @@ typedef enum direction_t {
     /* indicates as starting or ending point
      */
     DIRECTION_OPENED = 1 << 5,
+    DIRECTION_TRAVERSED = 1 << 6,
 } direction_t;
+
+void direction_println(direction_t dir);
 
 #endif // __LABYRINTHE_DIRECTION_H

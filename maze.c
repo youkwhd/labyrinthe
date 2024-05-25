@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "labyrinthe.h"
 #include "maze.h"
 #include "stack.h"
 
@@ -98,6 +99,27 @@ void maze_get_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t *neighbors)
 
     if ((int)coor.x - 1 >= 0) {
         neighbors[3] = maze->grid[coor.y][coor.x - 1];
+    }
+}
+
+void maze_get_untraversed_neighbors(maze_t *maze, coordinate_t coor, maze_cell_t neighbors[4], size_t *neighbors_len)
+{
+    *neighbors_len = 0;
+
+    if ((maze->grid[coor.y][coor.x] & DIRECTION_UP) && !(maze->grid[coor.y - 1][coor.x] & DIRECTION_TRAVERSED)) {
+        neighbors[(*neighbors_len)++] = DIRECTION_UP;
+    }
+
+    if ((maze->grid[coor.y][coor.x] & DIRECTION_RIGHT) && !(maze->grid[coor.y][coor.x + 1] & DIRECTION_TRAVERSED)) {
+        neighbors[(*neighbors_len)++] = DIRECTION_RIGHT;
+    }
+
+    if ((maze->grid[coor.y][coor.x] & DIRECTION_DOWN) && !(maze->grid[coor.y + 1][coor.x] & DIRECTION_TRAVERSED)) {
+        neighbors[(*neighbors_len)++] = DIRECTION_DOWN;
+    }
+
+    if ((maze->grid[coor.y][coor.x] & DIRECTION_LEFT) && !(maze->grid[coor.y][coor.x - 1] & DIRECTION_TRAVERSED)) {
+        neighbors[(*neighbors_len)++] = DIRECTION_LEFT;
     }
 }
 
@@ -204,7 +226,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     }
 }
 
-void maze_generate(maze_t *maze, coordinate_t start)
+coordinate_t maze_generate(maze_t *maze, coordinate_t start)
 {
     srand(time(NULL));
 
@@ -243,6 +265,62 @@ void maze_generate(maze_t *maze, coordinate_t start)
     maze_set_cell_dir(maze, finish, DIRECTION_OPENED);
 
     free(dead_ends);
+    stack_cleanup(&stack);
+    return finish;
+}
+
+void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end)
+{
+    stack_t stack;
+    stack_init(&stack, maze->width * maze->height);
+
+    coordinate_t cur_coor = start;
+
+    while (!coordinate_equal(cur_coor, end)) {
+        maze_cell_t neighbors[4] = {DIRECTION_NONE};
+        size_t neighbors_len = 0;
+        maze_get_untraversed_neighbors(maze, cur_coor, neighbors, &neighbors_len);
+
+        if (neighbors_len == 0) {
+            printf("WHOOPSIE\n");
+            maze_set_cell_dir(maze, cur_coor, DIRECTION_TRAVERSED);
+            cur_coor = stack_pop(&stack);
+            continue;
+        }
+
+        size_t selected = 0;
+        for (size_t i = 1; i < neighbors_len; i++) {
+            coordinate_t coor = cur_coor;
+            coordinate_move_to(&coor, neighbors[i]);
+
+            coordinate_t min_coor = cur_coor;
+            coordinate_move_to(&min_coor, neighbors[selected]);
+
+            int coor_distance = coordinate_distance(coor, end);
+            int min_coor_distance = coordinate_distance(min_coor, end);
+
+            if (MIN(coor_distance, min_coor_distance) == coor_distance) {
+                selected = i;
+            }
+        }
+
+        coordinate_println(cur_coor);
+        printf("\n");
+
+        stack_push(&stack, cur_coor);
+        maze_set_cell_dir(maze, cur_coor, DIRECTION_TRAVERSED);
+        coordinate_move_to(&cur_coor, neighbors[selected]);
+    }
+
+    coordinate_println(cur_coor);
+    printf("\n");
+
+    for (uint16_t i = 0; i < maze->height; i++) {
+        for (uint16_t j = 0; j < maze->width; j++) {
+            maze->grid[i][j] &= ~DIRECTION_TRAVERSED;
+        }
+    }
+
     stack_cleanup(&stack);
 }
 

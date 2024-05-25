@@ -45,6 +45,11 @@ coordinate_t coordinate_parse_from_string(char *str)
     return c;
 }
 
+int coordinate_distance(coordinate_t from, coordinate_t to)
+{
+    return abs(from.x - to.x) + abs(from.y - to.y);
+}
+
 void coordinate_cleanup(coordinate_t *c)
 {
     free(c);

@@ -15,7 +15,8 @@ typedef struct maze_t {
 } maze_t;
 
 void maze_init(maze_t *maze, uint16_t width, uint16_t height);
-void maze_generate(maze_t *maze, coordinate_t start);
+coordinate_t maze_generate(maze_t *maze, coordinate_t start);
+void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end);
 void maze_println(maze_t *maze);
 void maze_cleanup(maze_t *maze);
 

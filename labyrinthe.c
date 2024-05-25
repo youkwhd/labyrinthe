@@ -13,8 +13,9 @@ int main(int argc, char **argv)
 
     maze_t maze;
     maze_init(&maze, MAZE_WIDTH, MAZE_HEIGHT);
-    maze_generate(&maze, args.starting_point);
+    coordinate_t end = maze_generate(&maze, args.starting_point);
     maze_println(&maze);
+    maze_solve(&maze, args.starting_point, end);
 
     maze_cleanup(&maze);
     return 0;
