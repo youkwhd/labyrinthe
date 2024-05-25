@@ -282,7 +282,6 @@ void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end)
         maze_get_untraversed_neighbors(maze, cur_coor, neighbors, &neighbors_len);
 
         if (neighbors_len == 0) {
-            printf("WHOOPSIE\n");
             maze_set_cell_dir(maze, cur_coor, DIRECTION_TRAVERSED);
             cur_coor = stack_pop(&stack);
             continue;
@@ -304,17 +303,13 @@ void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end)
             }
         }
 
-        coordinate_println(cur_coor);
-        printf("\n");
-
         stack_push(&stack, cur_coor);
         maze_set_cell_dir(maze, cur_coor, DIRECTION_TRAVERSED);
         coordinate_move_to(&cur_coor, neighbors[selected]);
     }
 
-    coordinate_println(cur_coor);
-    printf("\n");
-
+    /* TODO: move into a seperate function
+     */
     for (uint16_t i = 0; i < maze->height; i++) {
         for (uint16_t j = 0; j < maze->width; j++) {
             maze->grid[i][j] &= ~DIRECTION_TRAVERSED;
