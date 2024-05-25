@@ -269,7 +269,7 @@ coordinate_t maze_generate(maze_t *maze, coordinate_t start)
     return finish;
 }
 
-void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end)
+void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
 {
     stack_t stack;
     stack_init(&stack, maze->width * maze->height);
@@ -317,6 +317,37 @@ void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end)
     }
 
     stack_cleanup(&stack);
+}
+
+void maze_solve_bfs(maze_t *maze, coordinate_t start, coordinate_t end)
+{
+    UNUSED(maze);
+    UNUSED(start);
+    UNUSED(end);
+    UNIMPLEMENTED();
+}
+
+void maze_solve_dfs(maze_t *maze, coordinate_t start, coordinate_t end)
+{
+    UNUSED(maze);
+    UNUSED(start);
+    UNUSED(end);
+    UNIMPLEMENTED();
+}
+
+void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end, maze_solving_strategy_t strat)
+{
+    switch (strat) {
+    case MAZE_STRATEGY_A_STAR:
+        maze_solve_a_star(maze, start, end);
+        return;
+    case MAZE_STRATEGY_BFS:
+        maze_solve_bfs(maze, start, end);
+        return;
+    case MAZE_STRATEGY_DFS:
+        maze_solve_dfs(maze, start, end);
+        return;
+    }
 }
 
 void maze_cleanup(maze_t *maze)
