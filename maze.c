@@ -261,6 +261,16 @@ coordinate_t maze_generate(maze_t *maze, coordinate_t start)
     size_t dead_ends_length = 0;
     maze_get_dead_ends(maze, &dead_ends, &dead_ends_length);
 
+    /* TODO: what is the solution when there is no dead ends on
+     * the corners?
+     *
+     *   - maybe pick any cell that is blocked?
+     */
+    if (dead_ends_length == 0) {
+        fprintf(stderr, "labyrinthe: whoopsie, there is no dead end found (this is a really rare find)\n");
+        exit(EXIT_FAILURE);
+    }
+
     coordinate_t finish = dead_ends[rand() % dead_ends_length];
     maze_set_cell_dir(maze, finish, DIRECTION_OPENED);
 

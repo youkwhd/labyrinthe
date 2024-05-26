@@ -1,7 +1,6 @@
 #include "maze.h"
 #include "args.h"
 #include "coordinate.h"
-#include "labyrinthe.h"
 
 #define MAZE_WIDTH 8
 #define MAZE_HEIGHT 5
