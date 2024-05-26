@@ -189,7 +189,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
         if (maze->grid[0][i] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
-                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+                *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
             }
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){i, 0};
@@ -198,7 +198,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
         if (maze->grid[maze->height - 1][i] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
-                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+                *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
             }
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){i, maze->height - 1};
@@ -209,7 +209,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
         if (maze->grid[i][0] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
-                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+                *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
             }
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){0, i};
@@ -218,7 +218,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
         if (maze->grid[i][maze->width - 1] == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
-                *dead_ends = realloc(*dead_ends, __dead_ends_length);
+                *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
             }
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){maze->width - 1, i};
