@@ -186,7 +186,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     *dead_ends = malloc(sizeof(**dead_ends) * __dead_ends_length);
 
     for (int i = 1; i < maze->width - 1; i++) {
-        if (maze->grid[0][i] == DIRECTION_BLOCKED) {
+        if (maze_get(maze, (coordinate_t){i, 0}) == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
@@ -195,7 +195,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){i, 0};
         }
 
-        if (maze->grid[maze->height - 1][i] == DIRECTION_BLOCKED) {
+        if (maze_get(maze, (coordinate_t){i, maze->height - 1}) == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
@@ -206,7 +206,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     }
 
     for (int i = 0; i < maze->height; i++) {
-        if (maze->grid[i][0] == DIRECTION_BLOCKED) {
+        if (maze_get(maze, (coordinate_t){0, i}) == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
@@ -215,13 +215,33 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){0, i};
         }
 
-        if (maze->grid[i][maze->width - 1] == DIRECTION_BLOCKED) {
+        if (maze_get(maze, (coordinate_t){maze->width - 1, i}) == DIRECTION_BLOCKED) {
             if (*dead_ends_length >= __dead_ends_length) {
                 __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
                 *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
             }
 
             (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){maze->width - 1, i};
+        }
+    }
+
+    if (dead_ends_length != 0)
+        return;
+
+    /* No dead end on the corner found, we find for any.
+     */
+    for (int i = 0; i < maze->height; i++) {
+        for (int j = 0; j < maze->width; j++) {
+            if (!(maze_get(maze, (coordinate_t){ j, i }) & DIRECTION_BLOCKED)) {
+                continue;
+            }
+
+            if (*dead_ends_length >= __dead_ends_length) {
+                __dead_ends_length += __DEAD_END_ARR_INITIAL_LEN;
+                *dead_ends = realloc(*dead_ends, sizeof(**dead_ends) * __dead_ends_length);
+            }
+
+            (*dead_ends)[(*dead_ends_length)++] = (coordinate_t){j, i};
         }
     }
 }
@@ -260,16 +280,6 @@ coordinate_t maze_generate(maze_t *maze, coordinate_t start)
     coordinate_t *dead_ends = NULL;
     size_t dead_ends_length = 0;
     maze_get_dead_ends(maze, &dead_ends, &dead_ends_length);
-
-    /* TODO: what is the solution when there is no dead ends on
-     * the corners?
-     *
-     *   - maybe pick any cell that is blocked?
-     */
-    if (dead_ends_length == 0) {
-        fprintf(stderr, "labyrinthe: whoopsie, there is no dead end found (this is a really rare find)\n");
-        exit(EXIT_FAILURE);
-    }
 
     coordinate_t finish = dead_ends[rand() % dead_ends_length];
     maze_set_cell_dir(maze, finish, DIRECTION_OPENED);
