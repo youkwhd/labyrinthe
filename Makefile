@@ -4,8 +4,7 @@ CC       = gcc
 CFLAGS   = -std=c99 -pedantic-errors -Wall -Wextra
 
 LD       = gcc
-# LDLIBS   = -lncurses
-LDLIBS   =
+LDLIBS   = -lraylib
 LDFLAGS  =
 
 SRC     := $(wildcard *.c)
