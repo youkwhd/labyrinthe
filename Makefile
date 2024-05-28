@@ -4,12 +4,22 @@ CC       = gcc
 CFLAGS   = -std=c99 -pedantic-errors -Wall -Wextra
 
 LD       = gcc
-LDLIBS   = -lraylib
+LDLIBS   =
 LDFLAGS  =
 
 SRC     := $(wildcard *.c)
+
+ifneq ($(GUI),1)
+	SRC		:= $(filter-out gui.c gui.h,$(SRC))
+endif
+
 HDR     := $(SRC:.c=.h)
 OBJ     := $(SRC:.c=.o)
+
+ifeq ($(GUI),1)
+	CFLAGS  += -DGUI
+	LDLIBS  += -lraylib
+endif
 
 all: $(EXE)
 

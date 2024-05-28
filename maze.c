@@ -7,6 +7,15 @@
 #include "maze.h"
 #include "stack.h"
 
+void maze_reset_traversed(maze_t *maze)
+{
+    for (uint16_t i = 0; i < maze->height; i++) {
+        for (uint16_t j = 0; j < maze->width; j++) {
+            maze->grid[i][j] &= ~DIRECTION_TRAVERSED;
+        }
+    }
+}
+
 void maze_println_horizontal_corner_border(maze_t *maze, int row)
 {
     printf("+");
@@ -295,7 +304,6 @@ void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
     stack_init(&stack, maze->width * maze->height);
 
     coordinate_t cur_coor = start;
-
     while (!coordinate_equal(cur_coor, end)) {
         maze_cell_t neighbors[4] = {DIRECTION_NONE};
         size_t neighbors_len = 0;
@@ -328,13 +336,8 @@ void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
         coordinate_move_to(&cur_coor, neighbors[selected]);
     }
 
-    /* TODO: move into a seperate function
-     */
-    for (uint16_t i = 0; i < maze->height; i++) {
-        for (uint16_t j = 0; j < maze->width; j++) {
-            maze->grid[i][j] &= ~DIRECTION_TRAVERSED;
-        }
-    }
+    stack_push(&stack, cur_coor);
+    maze_set_cell_dir(maze, cur_coor, DIRECTION_TRAVERSED);
 
     stack_cleanup(&stack);
 }

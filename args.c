@@ -25,12 +25,11 @@ void args_print_usage_and_exit(char *progname, int exit_status)
 void args_set_default_values(args_t *args)
 {
     args->use_gui = false;
-    args->maze_width = 0;
-    args->maze_height = 0;
+    args->maze_width = 8;
+    args->maze_height = 5;
     args->starting_point = (coordinate_t){ 0, 0 };
     args->ending_point = (coordinate_t){ 0, 0 };
 }
-
 
 #define ARG_WIDTH_ID 69
 #define ARG_HEIGHT_ID 420
