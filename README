@@ -18,6 +18,6 @@ Build labyrinthe:
 
     make && ./labyrinthe
 
-Optionally, you can build GUI with raylib:
+Optionally, build GUI (raylib):
     
     make GUI=1 && ./labyrinthe -g
