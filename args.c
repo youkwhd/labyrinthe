@@ -14,6 +14,7 @@ void args_print_usage_and_exit(char *progname, int exit_status)
             "Options:\n"
             "   -s point, --starting point    set the starting point, in comma seperated.\n"
             "   -e point, --ending point      set the ending point, in comma seperated.\n"
+            "   -S, --solve                   solve the maze.\n"
             "   --width n                     specify the maze width.\n"
             "   --height n                    specify the maze height.\n"
             "   -g, --gui                     enables grapichal user interface.\n"
@@ -25,6 +26,7 @@ void args_print_usage_and_exit(char *progname, int exit_status)
 void args_set_default_values(args_t *args)
 {
     args->use_gui = false;
+    args->solve = false;
     args->maze_width = 8;
     args->maze_height = 5;
     args->starting_point = (coordinate_t){ 0, 0 };
@@ -38,10 +40,11 @@ void args_parse(args_t *args, int argc, char **argv)
 {
     args_set_default_values(args);
 
-    char *short_opts = ":s:e:gh";
+    char *short_opts = ":s:e:Sgh";
     struct option long_opts[] = {
         { "starting", required_argument, NULL, 's' },
         { "ending", required_argument, NULL, 'e' },
+        { "solve", no_argument, NULL, 'S' },
         { "width", required_argument, NULL, ARG_WIDTH_ID },
         { "height", required_argument, NULL, ARG_HEIGHT_ID },
         { "gui", no_argument, NULL, 'g' },
@@ -60,6 +63,9 @@ void args_parse(args_t *args, int argc, char **argv)
             break;
         case 'e':
             args->ending_point = coordinate_parse_from_string(optarg);
+            break;
+        case 'S':
+            args->solve = true;
             break;
         case 'g':
             args->use_gui = true;

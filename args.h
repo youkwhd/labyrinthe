@@ -7,6 +7,7 @@
 
 typedef struct args_t {
     bool use_gui;
+    bool solve;
     int maze_width, maze_height;
     coordinate_t starting_point, ending_point;
 } args_t;

@@ -30,7 +30,10 @@ int main(int argc, char **argv)
     start = args.starting_point;
     end = maze_generate(&maze, start);
 
-    maze_solve(&maze, start, end, MAZE_SOLVING_STRATEGY_A_STAR);
+    if (args.solve) {
+        maze_solve(&maze, start, end, MAZE_SOLVING_STRATEGY_A_STAR);
+    }
+
     maze_println(&maze);
 
 #ifdef GUI
