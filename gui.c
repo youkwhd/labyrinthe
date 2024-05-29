@@ -3,6 +3,7 @@
 
 void gui_init(int width, int height)
 {
+    SetTraceLogLevel(LOG_ERROR);
     InitWindow(width + 20, height + 20, "labyrinthe");
     SetExitKey(KEY_Q);
     SetTargetFPS(60);
