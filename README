@@ -1,9 +1,21 @@
 labyrinthe
 ==========
 
-Maze generation
+Classical maze generation.
+
+    +  +--+--+--+
+    |     |     |
+    +--+  +  +  +
+       |  |  |  |
+    +  +  +--+  +
+    |           |
+    +--+--+--+--+
 
 Quick Start
 -----------
 
     make && ./labyrinthe
+
+Optionally, you can build GUI with raylib:
+    
+    make GUI=1 && ./labyrinthe -g
