@@ -21,9 +21,9 @@ void maze_println_horizontal_corner_border(maze_t *maze, int row)
     printf("+");
     for (int i = 0; i < maze->width; i++) {
         if (maze->grid[row][i] & DIRECTION_OPENED) {
-            printf(" ");
+            printf("  ");
         } else {
-            printf("-");
+            printf("--");
         }
 
         printf("+");
@@ -36,9 +36,9 @@ void maze_println_horizontal_border(maze_t *maze, int row)
     printf("+");
     for (int i = 0; i < maze->width; i++) {
         if (maze->grid[row][i] & DIRECTION_DOWN || (row + 1 < maze->height && maze->grid[row + 1][i] & DIRECTION_UP)) {
-            printf(" ");
+            printf("  ");
         } else {
-            printf("-");
+            printf("--");
         }
 
         printf("+");
@@ -57,7 +57,7 @@ void maze_println_vertical_border(maze_t *maze, int row)
     for (int i = 0; i < maze->width; i++) {
         bool is_wall_open = (i == maze->width - 1 && (row >= 1 && row < maze->height - 1) && maze->grid[row][i] & DIRECTION_OPENED);
 
-        printf(" ");
+        printf(maze->grid[row][i] & DIRECTION_TRAVERSED ? "<>" : "  ");
 
         if (maze->grid[row][i] & DIRECTION_RIGHT || (i + 1 < maze->width && maze->grid[row][i + 1] & DIRECTION_LEFT) || is_wall_open) {
             printf(" ");
