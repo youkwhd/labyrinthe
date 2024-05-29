@@ -14,6 +14,8 @@ Classical maze generation.
 Quick Start
 -----------
 
+Build labyrinthe:
+
     make && ./labyrinthe
 
 Optionally, you can build GUI with raylib:
