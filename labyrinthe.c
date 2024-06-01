@@ -41,6 +41,17 @@ int main(int argc, char **argv)
         gui_init(args.maze_width * GUI_CELL_SIZE, args.maze_height * GUI_CELL_SIZE);
 
         while (!gui_should_close()) {
+            if (gui_key_pressed(KEY_SPACE)) {
+                maze_reset(&maze);
+                end = maze_generate(&maze, start);
+
+                if (args.solve) {
+                    maze_solve(&maze, start, end, MAZE_SOLVING_STRATEGY_A_STAR);
+                }
+
+                maze_println(&maze);
+            }
+
             gui_begin_drawing();
             gui_draw_bg();
             gui_draw_maze(&maze);

@@ -23,6 +23,7 @@ typedef struct maze_t {
 void maze_init(maze_t *maze, uint16_t width, uint16_t height);
 coordinate_t maze_generate(maze_t *maze, coordinate_t start);
 void maze_reset_traversed(maze_t *maze);
+void maze_reset(maze_t *maze);
 void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end, maze_solving_strategy_t strat);
 void maze_println(maze_t *maze);
 void maze_cleanup(maze_t *maze);

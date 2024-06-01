@@ -255,6 +255,15 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
     }
 }
 
+void maze_reset(maze_t *maze)
+{
+    for (uint16_t i = 0; i < maze->height; i++) {
+        for (uint16_t j = 0; j < maze->width; j++) {
+            maze->grid[i][j] = DIRECTION_NONE;
+        }
+    }
+}
+
 coordinate_t maze_generate(maze_t *maze, coordinate_t start)
 {
     srand(time(NULL));

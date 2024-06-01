@@ -11,8 +11,10 @@ void gui_draw_maze(maze_t *maze);
 void gui_draw_maze_path(maze_t *maze);
 void gui_draw_bg();
 
-#define gui_begin_drawing() BeginDrawing();
-#define gui_end_drawing() EndDrawing();
+#define gui_begin_drawing() BeginDrawing()
+#define gui_end_drawing() EndDrawing()
+
+#define gui_key_pressed(key) IsKeyPressed(key)
 
 bool gui_should_close();
 void gui_cleanup();
