@@ -339,6 +339,13 @@ void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
     stack_push(&stack, cur_coor);
     maze_set_cell_dir(maze, cur_coor, DIRECTION_TRAVERSED);
 
+    /* TODO: this is correct but the closure
+     * should not be within this function
+     */
+    maze_reset_traversed(maze);
+    while (!stack_is_empty(&stack))
+        maze_set_cell_dir(maze, stack_pop(&stack), DIRECTION_TRAVERSED);
+
     stack_cleanup(&stack);
 }
 
