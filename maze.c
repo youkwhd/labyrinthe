@@ -290,6 +290,13 @@ coordinate_t maze_generate(maze_t *maze, coordinate_t start)
     size_t dead_ends_length = 0;
     maze_get_dead_ends(maze, &dead_ends, &dead_ends_length);
 
+    /* TODO: need to resolve this
+     */
+    if (dead_ends_length == 0) {
+        fprintf(stderr, "labyrinthe: no dead end found. (rare case)\n");
+        exit(1);
+    }
+
     coordinate_t finish = dead_ends[rand() % dead_ends_length];
     maze_set_cell_dir(maze, finish, DIRECTION_OPENED);
 
