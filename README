@@ -1,7 +1,7 @@
 labyrinthe
 ==========
 
-Classical maze generation.
+Classical maze solving & generation.
 
     +  +--+--+--+
     |     |     |
@@ -11,13 +11,19 @@ Classical maze generation.
     |           |
     +--+--+--+--+
 
+Prerequisite
+------------
+
+Install these tools:
+
+    - GNU Make
+    - GNU C Compiler
+    - raylib (optional)
+
 Quick Start
 -----------
 
-Build labyrinthe:
+Build labyrinthe with either:
 
     make && ./labyrinthe
-
-Optionally, build GUI (raylib):
-    
     make GUI=1 && ./labyrinthe -g
