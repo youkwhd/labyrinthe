@@ -17,7 +17,7 @@ void args_print_usage_and_exit(char *progname, int exit_status)
             "   -s point, --starting point    set the starting point, in comma seperated.\n"
             "   -e point, --ending point      set the ending point, in comma seperated.\n"
             "   -S, --solve                   solve the maze.\n"
-            "   --strat                       specify the maze solving strategy.\n"
+            "   --strat strategy              specify the maze solving strategy.\n"
             "                                 possible values:\n"
             "                                     - best (greedy best first search) \n"
             "                                     - breadth (breadth first search) \n"
