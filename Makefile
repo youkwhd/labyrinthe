@@ -31,6 +31,6 @@ $(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ) $(EXE)
+	$(RM) $(EXE) *.o
 
 .PHONY: clean all $(EXE)
