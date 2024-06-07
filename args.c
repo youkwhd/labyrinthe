@@ -11,7 +11,7 @@ void args_print_usage_and_exit(char *progname, int exit_status)
 {
     fprintf(stdout,
             "Usage: %s [options ...] \n"
-            "Maze generator.\n"
+            "Classical maze generator.\n"
             "\n"
             "Options:\n"
             "   -s point, --starting point    set the starting point, in comma seperated.\n"
