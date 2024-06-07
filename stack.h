@@ -9,7 +9,7 @@
 typedef struct stack_t {
     int cursor;
     size_t size;
-    coordinate_t *__stack;
+    coordinate_t *arr;
 } stack_t;
 
 void stack_init(stack_t *st, size_t size);
