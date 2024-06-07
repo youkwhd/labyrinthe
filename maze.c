@@ -234,7 +234,7 @@ void maze_get_dead_ends(maze_t *maze, coordinate_t **dead_ends, size_t *dead_end
         }
     }
 
-    if (dead_ends_length != 0)
+    if (*dead_ends_length != 0)
         return;
 
     /* No dead end on the corner found, we find for any.
