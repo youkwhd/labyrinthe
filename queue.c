@@ -31,5 +31,6 @@ coordinate_t queue_dequeue(queue_t *q)
     for (size_t i = 1; i < q->cursor; i++)
         q->arr[i - 1] = q->arr[i];
 
+    q->cursor--;
     return val;
 }
