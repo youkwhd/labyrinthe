@@ -14,19 +14,19 @@ bool queue_is_empty(queue_t *q)
     return q->cursor == 0;
 }
 
-void queue_enqueue(queue_t *q, coordinate_t x)
+void queue_enqueue(queue_t *q, stack_t st)
 {
-    q->arr[q->cursor++] = x;
+    q->arr[q->cursor++] = st;
 }
 
-coordinate_t queue_head(queue_t *q)
+stack_t queue_head(queue_t *q)
 {
     return q->arr[0];
 }
 
-coordinate_t queue_dequeue(queue_t *q)
+stack_t queue_dequeue(queue_t *q)
 {
-    coordinate_t val = q->arr[0];
+    stack_t val = q->arr[0];
 
     for (size_t i = 0; i < q->cursor; i++)
         q->arr[i] = q->arr[i + 1];

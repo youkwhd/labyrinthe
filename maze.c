@@ -370,11 +370,22 @@ void maze_solve_breadth_first_search(maze_t *maze, coordinate_t start, coordinat
 {
     queue_t queue;
     queue_init(&queue, maze->width * maze->height);
-    queue_enqueue(&queue, start);
 
-    while (!coordinate_equal(queue_head(&queue), end)) {
-        coordinate_t coor = queue_dequeue(&queue);
+    stack_t path;
+    stack_init(&path, maze->width * maze->height);
+    stack_push(&path, start);
+
+    queue_enqueue(&queue, path);
+
+    while (!queue_is_empty(&queue)) {
+        stack_t __path = queue_dequeue(&queue);
+        coordinate_t coor = stack_top(&__path);
         maze_set_cell_dir(maze, coor, DIRECTION_TRAVERSED);
+
+        if (coordinate_equal(coor, end)) {
+            path = __path;
+            break;
+        }
 
         maze_cell_t neighbors[4] = {DIRECTION_NONE};
         size_t neighbors_len = 0;
@@ -383,14 +394,37 @@ void maze_solve_breadth_first_search(maze_t *maze, coordinate_t start, coordinat
         for (size_t i = 0; i < neighbors_len; i++) {
             coordinate_t neighbor_coor = coor;
             coordinate_move_to(&neighbor_coor, neighbors[i]);
-            queue_enqueue(&queue, neighbor_coor);
+
+            stack_t npath;
+            stack_copy(&npath, &__path);
+
+            stack_push(&npath, neighbor_coor);
+            queue_enqueue(&queue, npath);
         }
+
+        stack_cleanup(&__path);
     }
 
-    maze_set_cell_dir(maze, queue_head(&queue), DIRECTION_TRAVERSED);
-
-    /* TODO: find a way to get the solution path
+    /* TODO: this is correct but the closure
+     * should not be within this function
+     *
+     * also, this assumes the solution is
+     * always present.
      */
+    maze_reset_traversed(maze);
+    while (!stack_is_empty(&path))
+        maze_set_cell_dir(maze, stack_pop(&path), DIRECTION_TRAVERSED);
+
+    stack_cleanup(&path);
+
+
+    /* TODO: refactor queue to keep
+     * char *p as it's array item
+     */
+    while (!queue_is_empty(&queue)) {
+        stack_t __path = queue_dequeue(&queue);
+        stack_cleanup(&__path);
+    }
 
     queue_cleanup(&queue);
 }
