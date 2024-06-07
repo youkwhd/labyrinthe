@@ -62,7 +62,6 @@ int main(int argc, char **argv)
     }
 #endif // GUI
 
-    maze_reset_traversed(&maze);
     maze_cleanup(&maze);
     return 0;
 }
