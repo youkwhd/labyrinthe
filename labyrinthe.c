@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     coordinate_t end = maze_generate(&maze, start);
 
     if (args.solve) {
-        maze_solve(&maze, start, end, MAZE_SOLVING_STRATEGY_A_STAR);
+        maze_solve(&maze, start, end, args.solving_strat);
     }
 
     maze_println(&maze);
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
                 end = maze_generate(&maze, start);
 
                 if (args.solve) {
-                    maze_solve(&maze, start, end, MAZE_SOLVING_STRATEGY_A_STAR);
+                    maze_solve(&maze, start, end, args.solving_strat);
                 }
 
                 maze_println(&maze);

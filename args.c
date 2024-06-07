@@ -1,6 +1,8 @@
 #include "args.h"
+#include "maze.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <getopt.h>
@@ -15,6 +17,11 @@ void args_print_usage_and_exit(char *progname, int exit_status)
             "   -s point, --starting point    set the starting point, in comma seperated.\n"
             "   -e point, --ending point      set the ending point, in comma seperated.\n"
             "   -S, --solve                   solve the maze.\n"
+            "   --strat                       specify the maze solving strategy.\n"
+            "                                 possible values:\n"
+            "                                     - best (greedy best first search) \n"
+            "                                     - breadth (breadth first search) \n"
+            "                                     - depth (depth first search) \n"
             "   --width n                     specify the maze width.\n"
             "   --height n                    specify the maze height.\n"
             "   -g, --gui                     enables grapichal user interface.\n"
@@ -27,14 +34,33 @@ void args_set_default_values(args_t *args)
 {
     args->use_gui = false;
     args->solve = false;
+    args->solving_strat = MAZE_SOLVING_STRATEGY_BEST_FIRST_SEARCH;
     args->maze_width = 8;
     args->maze_height = 5;
     args->starting_point = (coordinate_t){ 0, 0 };
     args->ending_point = (coordinate_t){ 0, 0 };
 }
 
+maze_solving_strategy_t __parse_maze_strategy(char *strat)
+{
+    if (strcmp(strat, "best") == 0) {
+        return MAZE_SOLVING_STRATEGY_BEST_FIRST_SEARCH;
+    }
+
+    if (strcmp(strat, "breadth") == 0) {
+        return MAZE_SOLVING_STRATEGY_BREADTH_FIRST_SEARCH;
+    }
+
+    if (strcmp(strat, "depth") == 0) {
+        return MAZE_SOLVING_STRATEGY_DEPTH_FIRST_SEARCH;
+    }
+
+    return -1;
+}
+
 #define ARG_WIDTH_ID 69
 #define ARG_HEIGHT_ID 420
+#define ARG_STRAT_ID 666
 
 void args_parse(args_t *args, int argc, char **argv)
 {
@@ -45,6 +71,7 @@ void args_parse(args_t *args, int argc, char **argv)
         { "starting", required_argument, NULL, 's' },
         { "ending", required_argument, NULL, 'e' },
         { "solve", no_argument, NULL, 'S' },
+        { "strat", required_argument, NULL, ARG_STRAT_ID },
         { "width", required_argument, NULL, ARG_WIDTH_ID },
         { "height", required_argument, NULL, ARG_HEIGHT_ID },
         { "gui", no_argument, NULL, 'g' },
@@ -67,6 +94,15 @@ void args_parse(args_t *args, int argc, char **argv)
         case 'S':
             args->solve = true;
             break;
+        case ARG_STRAT_ID:
+            args->solving_strat = __parse_maze_strategy(optarg);
+
+            if ((int)args->solving_strat == -1) {
+                fprintf(stderr, "%s: Unknown solving strategy `%s`\n", argv[0], optarg);
+                exit(EXIT_FAILURE);
+            }
+
+            break;
         case 'g':
             args->use_gui = true;
             break;
@@ -82,7 +118,7 @@ void args_parse(args_t *args, int argc, char **argv)
             }
 
             if (args->maze_width < 0) {
-                fprintf(stderr, "%s: '--width' value cannot be negative \n", argv[0]);
+                fprintf(stderr, "%s: '--width' value cannot be negative\n", argv[0]);
                 exit(EXIT_FAILURE);
             }
 

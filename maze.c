@@ -315,7 +315,7 @@ coordinate_t maze_generate(maze_t *maze, coordinate_t start)
     return finish;
 }
 
-void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
+void maze_solve_best_first_search(maze_t *maze, coordinate_t start, coordinate_t end)
 {
     stack_t stack;
     stack_init(&stack, maze->width * maze->height);
@@ -366,7 +366,7 @@ void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
     stack_cleanup(&stack);
 }
 
-void maze_solve_bfs(maze_t *maze, coordinate_t start, coordinate_t end)
+void maze_solve_breadth_first_search(maze_t *maze, coordinate_t start, coordinate_t end)
 {
     queue_t queue;
     queue_init(&queue, maze->width * maze->height);
@@ -395,7 +395,7 @@ void maze_solve_bfs(maze_t *maze, coordinate_t start, coordinate_t end)
     queue_cleanup(&queue);
 }
 
-void maze_solve_dfs(maze_t *maze, coordinate_t start, coordinate_t end)
+void maze_solve_depth_first_search(maze_t *maze, coordinate_t start, coordinate_t end)
 {
     stack_t stack;
     stack_init(&stack, maze->width * maze->height);
@@ -432,14 +432,14 @@ void maze_solve_dfs(maze_t *maze, coordinate_t start, coordinate_t end)
 void maze_solve(maze_t *maze, coordinate_t start, coordinate_t end, maze_solving_strategy_t strat)
 {
     switch (strat) {
-    case MAZE_SOLVING_STRATEGY_A_STAR:
-        maze_solve_a_star(maze, start, end);
+    case MAZE_SOLVING_STRATEGY_BEST_FIRST_SEARCH:
+        maze_solve_best_first_search(maze, start, end);
         return;
-    case MAZE_SOLVING_STRATEGY_BFS:
-        maze_solve_bfs(maze, start, end);
+    case MAZE_SOLVING_STRATEGY_BREADTH_FIRST_SEARCH:
+        maze_solve_breadth_first_search(maze, start, end);
         return;
-    case MAZE_SOLVING_STRATEGY_DFS:
-        maze_solve_dfs(maze, start, end);
+    case MAZE_SOLVING_STRATEGY_DEPTH_FIRST_SEARCH:
+        maze_solve_depth_first_search(maze, start, end);
         return;
     }
 }

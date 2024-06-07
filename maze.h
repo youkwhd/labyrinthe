@@ -10,9 +10,9 @@
 typedef direction_t maze_cell_t;
 
 typedef enum maze_solving_strategy_t {
-    MAZE_SOLVING_STRATEGY_A_STAR = 0,
-    MAZE_SOLVING_STRATEGY_BFS,
-    MAZE_SOLVING_STRATEGY_DFS,
+    MAZE_SOLVING_STRATEGY_BEST_FIRST_SEARCH = 0,
+    MAZE_SOLVING_STRATEGY_BREADTH_FIRST_SEARCH,
+    MAZE_SOLVING_STRATEGY_DEPTH_FIRST_SEARCH,
 } maze_solving_strategy_t;
 
 typedef struct maze_t {
