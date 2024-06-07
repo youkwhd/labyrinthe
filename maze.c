@@ -365,12 +365,58 @@ void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
     stack_cleanup(&stack);
 }
 
+stack_t *__maze_solve_bfs_impl(maze_t *maze, coordinate_t coor, coordinate_t end, stack_t *path)
+{
+    maze_set_cell_dir(maze, coor, DIRECTION_TRAVERSED);
+    stack_push(path, coor);
+
+    if (coordinate_equal(coor, end)) {
+        return path;
+    }
+
+    maze_cell_t neighbors[4] = {DIRECTION_NONE};
+    size_t neighbors_len = 0;
+    maze_get_untraversed_neighbors(maze, coor, neighbors, &neighbors_len);
+
+    if (neighbors_len == 0) {
+        stack_cleanup(path);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < neighbors_len; i++) {
+        coordinate_t neighbor_coor = coor;
+        coordinate_move_to(&neighbor_coor, neighbors[i]);
+
+        stack_t npath;
+        stack_copy(&npath, path);
+
+        stack_t *solution = __maze_solve_bfs_impl(maze, neighbor_coor, end, &npath);
+        if (solution != NULL)
+            return solution;
+    }
+
+    stack_cleanup(path);
+    return NULL;
+}
+
 void maze_solve_bfs(maze_t *maze, coordinate_t start, coordinate_t end)
 {
-    UNUSED(maze);
-    UNUSED(start);
-    UNUSED(end);
-    UNIMPLEMENTED();
+    /* NOTE: `stack` should be cleaned up
+     * fine by _impl().
+     */
+    stack_t stack;
+    stack_init(&stack, maze->width * maze->height);
+
+    stack_t *path = __maze_solve_bfs_impl(maze, start, end, &stack);
+
+    /* TODO: this is correct but the closure
+     * should not be within this function
+     */
+    maze_reset_traversed(maze);
+    while (!stack_is_empty(path))
+        maze_set_cell_dir(maze, stack_pop(path), DIRECTION_TRAVERSED);
+
+    stack_cleanup(path);
 }
 
 void maze_solve_dfs(maze_t *maze, coordinate_t start, coordinate_t end)

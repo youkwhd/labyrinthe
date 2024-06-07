@@ -19,6 +19,16 @@ void stack_push(stack_t *st, coordinate_t x)
     st->__stack[++st->cursor] = x;
 }
 
+void stack_copy(stack_t *st, stack_t *from)
+{
+    st->size = from->size;
+    st->cursor = from->cursor;
+    st->__stack = malloc(sizeof(*st->__stack) * st->size);
+
+    for (int i = 0; i <= from->cursor; i++)
+        st->__stack[i] = from->__stack[i];
+}
+
 coordinate_t stack_top(stack_t *st)
 {
     return st->__stack[st->cursor];
