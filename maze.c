@@ -5,6 +5,7 @@
 
 #include "labyrinthe.h"
 #include "maze.h"
+#include "queue.h"
 #include "stack.h"
 
 void maze_reset_traversed(maze_t *maze)
@@ -367,10 +368,31 @@ void maze_solve_a_star(maze_t *maze, coordinate_t start, coordinate_t end)
 
 void maze_solve_bfs(maze_t *maze, coordinate_t start, coordinate_t end)
 {
-    UNUSED(maze);
-    UNUSED(start);
-    UNUSED(end);
-    UNIMPLEMENTED();
+    queue_t queue;
+    queue_init(&queue, maze->width * maze->height);
+    queue_enqueue(&queue, start);
+
+    while (!coordinate_equal(queue_head(&queue), end)) {
+        coordinate_t coor = queue_dequeue(&queue);
+        maze_set_cell_dir(maze, coor, DIRECTION_TRAVERSED);
+
+        maze_cell_t neighbors[4] = {DIRECTION_NONE};
+        size_t neighbors_len = 0;
+        maze_get_untraversed_neighbors(maze, coor, neighbors, &neighbors_len);
+
+        for (size_t i = 0; i < neighbors_len; i++) {
+            coordinate_t neighbor_coor = coor;
+            coordinate_move_to(&neighbor_coor, neighbors[i]);
+            queue_enqueue(&queue, neighbor_coor);
+        }
+    }
+
+    maze_set_cell_dir(maze, queue_head(&queue), DIRECTION_TRAVERSED);
+
+    /* TODO: find a way to get the solution path
+     */
+
+    queue_cleanup(&queue);
 }
 
 void maze_solve_dfs(maze_t *maze, coordinate_t start, coordinate_t end)
