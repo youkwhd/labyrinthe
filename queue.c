@@ -28,9 +28,14 @@ coordinate_t queue_dequeue(queue_t *q)
 {
     coordinate_t val = q->arr[0];
 
-    for (size_t i = 1; i < q->cursor; i++)
-        q->arr[i - 1] = q->arr[i];
+    for (size_t i = 0; i < q->cursor; i++)
+        q->arr[i] = q->arr[i + 1];
 
     q->cursor--;
     return val;
+}
+
+void queue_cleanup(queue_t *q)
+{
+    free(q->arr);
 }

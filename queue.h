@@ -16,5 +16,6 @@ bool queue_is_empty(queue_t *q);
 void queue_enqueue(queue_t *q, coordinate_t x);
 coordinate_t queue_head(queue_t *q);
 coordinate_t queue_dequeue(queue_t *q);
+void queue_cleanup(queue_t *q);
 
 #endif // __LABYRINTHE_QUEUE_H
